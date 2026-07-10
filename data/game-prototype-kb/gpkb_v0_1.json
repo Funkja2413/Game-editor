@@ -1,0 +1,4700 @@
+{
+  "schema_version": "0.1.0",
+  "name": "game-prototype-kb",
+  "description": "用于把一句话游戏想法编译为可玩几何骨架 Runtime Skeleton 的知识库。",
+  "generated_at": "2026-07-05T14:09:02",
+  "core_loops": [
+    {
+      "id": "core_loop.wave_defense",
+      "name": "Wave Defense",
+      "description": "玩家在敌人波次之间准备，在波次中防守，击败敌人后获得奖励并升级。",
+      "experience_intent": [
+        "准备感",
+        "压力递增",
+        "防守成功后的释放",
+        "逐波成长"
+      ],
+      "loop_steps": [
+        "prepare",
+        "enemy_wave",
+        "defend",
+        "reward",
+        "upgrade",
+        "next_wave"
+      ],
+      "required_modules": [
+        "module.enemy_spawn",
+        "module.path_or_lane",
+        "module.defense_action",
+        "module.reward_system",
+        "module.upgrade_system",
+        "module.failure_condition"
+      ],
+      "optional_modules": [
+        "module.tower_building",
+        "module.tower_attack",
+        "module.hero_control",
+        "module.boss_wave",
+        "module.card_system",
+        "module.random_upgrade_choice",
+        "module.base_hp"
+      ],
+      "default_runtime": {
+        "camera": "top_down_or_isometric",
+        "placeholder_style": "greybox_geometry",
+        "win_condition": "survive_all_waves",
+        "fail_condition": "base_hp_zero"
+      },
+      "best_for": [
+        "tower_defense",
+        "lane_defense",
+        "pvz_like",
+        "roguelite_td"
+      ],
+      "aliases": [
+        "塔防",
+        "防守",
+        "保卫",
+        "波次",
+        "Kingdom Rush",
+        "PVZ",
+        "植物大战僵尸",
+        "Bloons"
+      ],
+      "fusion_tags": [
+        "deck_builder",
+        "survival_growth",
+        "hero_control",
+        "auto_battler",
+        "factory_expansion"
+      ],
+      "avoid_with": [
+        "pure_platformer",
+        "pure_racing"
+      ],
+      "skeleton_output": [
+        "map_with_path",
+        "enemy_waves",
+        "build_points",
+        "defense_units",
+        "reward_after_wave",
+        "upgrade_panel"
+      ]
+    },
+    {
+      "id": "core_loop.survival_growth",
+      "name": "Survival Growth",
+      "description": "玩家持续移动和击杀敌人，获得经验，选择成长，形成越来越强的 Build。",
+      "experience_intent": [
+        "越来越爽",
+        "被包围的压力",
+        "短周期升级反馈",
+        "Build 成型"
+      ],
+      "loop_steps": [
+        "move",
+        "enemy_pressure",
+        "attack",
+        "collect_exp",
+        "choose_upgrade",
+        "survive_longer"
+      ],
+      "required_modules": [
+        "module.player_movement",
+        "module.enemy_spawn",
+        "module.attack_system",
+        "module.exp_drop",
+        "module.random_upgrade_choice",
+        "module.failure_condition"
+      ],
+      "optional_modules": [
+        "module.auto_attack",
+        "module.weapon_evolution",
+        "module.boss_wave",
+        "module.chest_reward",
+        "module.relic_system"
+      ],
+      "default_runtime": {
+        "camera": "top_down",
+        "placeholder_style": "greybox_geometry",
+        "win_condition": "survive_time_limit_or_defeat_final_boss",
+        "fail_condition": "player_hp_zero"
+      },
+      "best_for": [
+        "vampire_survivors_like",
+        "arena_survival",
+        "roguelite_action"
+      ],
+      "aliases": [
+        "幸存者",
+        "割草",
+        "生存",
+        "肉鸽生存",
+        "Vampire Survivors",
+        "吸血鬼幸存者",
+        "20 Minutes Till Dawn"
+      ],
+      "fusion_tags": [
+        "wave_defense",
+        "deck_builder",
+        "equipment_build",
+        "boss_rush"
+      ],
+      "avoid_with": [
+        "turn_based_only",
+        "static_puzzle"
+      ],
+      "skeleton_output": [
+        "arena",
+        "player_controller",
+        "enemy_spawner",
+        "exp_orbs",
+        "upgrade_choices",
+        "survival_timer"
+      ]
+    },
+    {
+      "id": "core_loop.deck_builder",
+      "name": "Deck Builder",
+      "description": "玩家通过抽牌、出牌、结算、奖励和商店来不断强化牌组或临时策略。",
+      "experience_intent": [
+        "不确定性",
+        "组合决策",
+        "爆发结算",
+        "构筑成长"
+      ],
+      "loop_steps": [
+        "draw",
+        "choose_cards",
+        "play_cards",
+        "resolve_effect",
+        "reward",
+        "modify_deck"
+      ],
+      "required_modules": [
+        "module.card_system",
+        "module.deck_hand",
+        "module.card_effect",
+        "module.reward_system",
+        "module.progression_choice"
+      ],
+      "optional_modules": [
+        "module.energy_system",
+        "module.shop_system",
+        "module.relic_system",
+        "module.score_multiplier",
+        "module.enemy_intent"
+      ],
+      "default_runtime": {
+        "camera": "board_ui",
+        "placeholder_style": "rect_cards_and_simple_tokens",
+        "win_condition": "defeat_enemy_or_reach_score",
+        "fail_condition": "hp_zero_or_round_failed"
+      },
+      "best_for": [
+        "slay_the_spire_like",
+        "balatro_like",
+        "card_battle",
+        "card_puzzle"
+      ],
+      "aliases": [
+        "卡牌",
+        "牌组",
+        "构筑",
+        "Deck",
+        "Deckbuilder",
+        "Balatro",
+        "杀戮尖塔",
+        "Slay the Spire",
+        "Joker"
+      ],
+      "fusion_tags": [
+        "wave_defense",
+        "tactical_turn",
+        "auto_battler",
+        "puzzle_score",
+        "survival_growth"
+      ],
+      "avoid_with": [
+        "high_precision_action"
+      ],
+      "skeleton_output": [
+        "deck",
+        "hand_ui",
+        "card_effects",
+        "target_or_score_goal",
+        "reward_cards"
+      ]
+    },
+    {
+      "id": "core_loop.auto_battler",
+      "name": "Auto Battler",
+      "description": "玩家购买、合成、摆放单位，战斗阶段自动进行，战后获得奖励并继续构筑阵容。",
+      "experience_intent": [
+        "赛前规划",
+        "自动验证",
+        "阵容协同",
+        "随机商店"
+      ],
+      "loop_steps": [
+        "shop",
+        "buy_units",
+        "position_units",
+        "auto_fight",
+        "reward",
+        "upgrade_team"
+      ],
+      "required_modules": [
+        "module.shop_system",
+        "module.unit_pool",
+        "module.board_grid",
+        "module.auto_combat",
+        "module.economy_system",
+        "module.round_progression"
+      ],
+      "optional_modules": [
+        "module.merge_units",
+        "module.faction_synergy",
+        "module.equipment_system",
+        "module.boss_wave"
+      ],
+      "default_runtime": {
+        "camera": "top_down_board",
+        "placeholder_style": "circle_units_on_grid",
+        "win_condition": "win_rounds_or_survive",
+        "fail_condition": "player_hp_zero"
+      },
+      "best_for": [
+        "auto_chess_like",
+        "squad_builder",
+        "backpack_battler"
+      ],
+      "aliases": [
+        "自走棋",
+        "自动战斗",
+        "自动战斗",
+        "Auto Chess",
+        "Auto Battler",
+        "阵容"
+      ],
+      "fusion_tags": [
+        "deck_builder",
+        "wave_defense",
+        "equipment_build",
+        "merge_synthesis"
+      ],
+      "avoid_with": [
+        "real_time_precision_platformer"
+      ],
+      "skeleton_output": [
+        "shop_panel",
+        "placement_grid",
+        "auto_combat_round",
+        "unit_upgrade"
+      ]
+    },
+    {
+      "id": "core_loop.puzzle_solve",
+      "name": "Puzzle Solve",
+      "description": "玩家观察局面，进行有限操作，触发变化，达成解谜目标。",
+      "experience_intent": [
+        "观察",
+        "推理",
+        "有限操作",
+        "解开谜题"
+      ],
+      "loop_steps": [
+        "observe",
+        "choose_action",
+        "trigger_change",
+        "evaluate_state",
+        "solve_or_retry"
+      ],
+      "required_modules": [
+        "module.puzzle_rule",
+        "module.player_action",
+        "module.goal_condition",
+        "module.retry_system"
+      ],
+      "optional_modules": [
+        "module.board_grid",
+        "module.match_rule",
+        "module.switch_trigger",
+        "module.chain_reaction",
+        "module.step_limit"
+      ],
+      "default_runtime": {
+        "camera": "top_down_or_side",
+        "placeholder_style": "grid_blocks_and_targets",
+        "win_condition": "puzzle_goal_reached",
+        "fail_condition": "step_limit_or_invalid_state"
+      },
+      "best_for": [
+        "match3",
+        "sokoban",
+        "physics_puzzle",
+        "logic_puzzle"
+      ],
+      "aliases": [
+        "解谜",
+        "消除",
+        "三消",
+        "推箱子",
+        "Puzzle",
+        "Match3",
+        "Candy Crush"
+      ],
+      "fusion_tags": [
+        "deck_builder",
+        "roguelite_modifier",
+        "narrative_choice"
+      ],
+      "avoid_with": [
+        "pure_swarm_action"
+      ],
+      "skeleton_output": [
+        "puzzle_board",
+        "interactable_objects",
+        "goal_marker",
+        "reset_button"
+      ]
+    },
+    {
+      "id": "core_loop.factory_expansion",
+      "name": "Factory Expansion",
+      "description": "玩家采集资源、运输、加工、生产新物品，再用产出扩张系统。",
+      "experience_intent": [
+        "自动化",
+        "产线优化",
+        "扩张",
+        "效率提升"
+      ],
+      "loop_steps": [
+        "collect_resource",
+        "transport",
+        "process",
+        "produce",
+        "unlock",
+        "expand"
+      ],
+      "required_modules": [
+        "module.resource_node",
+        "module.production_unit",
+        "module.transport_link",
+        "module.storage_system",
+        "module.unlock_tree"
+      ],
+      "optional_modules": [
+        "module.automation",
+        "module.worker_system",
+        "module.energy_system",
+        "module.enemy_attack",
+        "module.market_system"
+      ],
+      "default_runtime": {
+        "camera": "top_down",
+        "placeholder_style": "squares_lines_resource_nodes",
+        "win_condition": "reach_production_goal",
+        "fail_condition": "none_or_resource_block"
+      },
+      "best_for": [
+        "factorio_like",
+        "idle_factory",
+        "automation_game"
+      ],
+      "aliases": [
+        "工厂",
+        "自动化",
+        "产线",
+        "Factorio",
+        "Satisfactory"
+      ],
+      "fusion_tags": [
+        "wave_defense",
+        "build_expand",
+        "idle_incremental"
+      ],
+      "avoid_with": [
+        "pure_card_battle"
+      ],
+      "skeleton_output": [
+        "resource_nodes",
+        "machines",
+        "transport_links",
+        "production_chain"
+      ]
+    },
+    {
+      "id": "core_loop.runner_avoidance",
+      "name": "Runner Avoidance",
+      "description": "玩家持续前进，通过躲避、跳跃、收集和反应操作坚持更久或到达终点。",
+      "experience_intent": [
+        "反应",
+        "速度递增",
+        "即时失败反馈",
+        "路线选择"
+      ],
+      "loop_steps": [
+        "auto_move",
+        "obstacle_spawn",
+        "dodge_or_jump",
+        "collect",
+        "speed_up",
+        "finish_or_fail"
+      ],
+      "required_modules": [
+        "module.auto_forward",
+        "module.obstacle_spawner",
+        "module.dodge_action",
+        "module.collectable_spawner",
+        "module.collision_failure"
+      ],
+      "optional_modules": [
+        "module.lane_switch",
+        "module.power_up",
+        "module.vehicle_control",
+        "module.rhythm_timing"
+      ],
+      "default_runtime": {
+        "camera": "side_or_behind",
+        "placeholder_style": "capsule_player_cube_obstacles",
+        "win_condition": "reach_distance_or_finish",
+        "fail_condition": "collision_or_hp_zero"
+      },
+      "best_for": [
+        "endless_runner",
+        "racing_runner",
+        "rhythm_runner"
+      ],
+      "aliases": [
+        "跑酷",
+        "闪避",
+        "Runner",
+        "Endless Runner",
+        "赛车跑酷"
+      ],
+      "fusion_tags": [
+        "roguelite_upgrade",
+        "score_attack",
+        "vehicle_combat"
+      ],
+      "avoid_with": [
+        "static_strategy"
+      ],
+      "skeleton_output": [
+        "moving_player",
+        "obstacle_spawner",
+        "collectables",
+        "distance_meter"
+      ]
+    },
+    {
+      "id": "core_loop.build_expand",
+      "name": "Build Expand",
+      "description": "玩家获得资源，建造设施，设施产生更多资源或能力，再继续扩张。",
+      "experience_intent": [
+        "从小到大",
+        "建造反馈",
+        "资源复利",
+        "版图扩张"
+      ],
+      "loop_steps": [
+        "collect",
+        "build",
+        "produce",
+        "upgrade",
+        "expand"
+      ],
+      "required_modules": [
+        "module.resource_system",
+        "module.building_grid",
+        "module.production_tick",
+        "module.upgrade_system",
+        "module.capacity_or_territory"
+      ],
+      "optional_modules": [
+        "module.worker_system",
+        "module.defense_action",
+        "module.tech_tree",
+        "module.disaster_event",
+        "module.happiness_system"
+      ],
+      "default_runtime": {
+        "camera": "top_down_or_isometric",
+        "placeholder_style": "building_squares_on_grid",
+        "win_condition": "reach_build_goal",
+        "fail_condition": "none_or_crisis"
+      },
+      "best_for": [
+        "city_builder",
+        "base_builder",
+        "idle_builder",
+        "management_game"
+      ],
+      "aliases": [
+        "建造",
+        "基地",
+        "经营",
+        "城市",
+        "City Builder",
+        "Base Builder"
+      ],
+      "fusion_tags": [
+        "wave_defense",
+        "factory_expansion",
+        "survival_growth",
+        "roguelite_event"
+      ],
+      "avoid_with": [
+        "pure_reflex_runner"
+      ],
+      "skeleton_output": [
+        "build_grid",
+        "resource_counter",
+        "building_menu",
+        "production_tick"
+      ]
+    },
+    {
+      "id": "core_loop.tactical_turn",
+      "name": "Tactical Turn",
+      "description": "玩家在回合中移动和行动，敌方回合反击，通过位置和技能解决战斗。",
+      "experience_intent": [
+        "回合思考",
+        "位置规划",
+        "行动取舍",
+        "结果可预期"
+      ],
+      "loop_steps": [
+        "inspect",
+        "move_unit",
+        "choose_action",
+        "resolve",
+        "enemy_turn",
+        "next_round"
+      ],
+      "required_modules": [
+        "module.board_grid",
+        "module.unit_system",
+        "module.action_point",
+        "module.enemy_ai",
+        "module.turn_order",
+        "module.goal_condition"
+      ],
+      "optional_modules": [
+        "module.terrain_system",
+        "module.push_pull",
+        "module.enemy_intent",
+        "module.skill_cooldown",
+        "module.equipment_system"
+      ],
+      "default_runtime": {
+        "camera": "top_down_grid",
+        "placeholder_style": "colored_circles_on_grid",
+        "win_condition": "defeat_all_or_objective",
+        "fail_condition": "all_units_dead_or_objective_failed"
+      },
+      "best_for": [
+        "tactics",
+        "into_the_breach_like",
+        "chess_like_battle"
+      ],
+      "aliases": [
+        "战棋",
+        "回合策略",
+        "Tactics",
+        "Into the Breach",
+        "棋盘战斗"
+      ],
+      "fusion_tags": [
+        "deck_builder",
+        "roguelite",
+        "hero_growth"
+      ],
+      "avoid_with": [
+        "real_time_swarm_survival"
+      ],
+      "skeleton_output": [
+        "tactical_grid",
+        "controllable_units",
+        "enemy_units",
+        "turn_system"
+      ]
+    },
+    {
+      "id": "core_loop.merge_synthesis",
+      "name": "Merge Synthesis",
+      "description": "玩家拖拽或点击合成相同物品，生成更高等级物品，并用产物解锁新目标。",
+      "experience_intent": [
+        "整理",
+        "合成升级",
+        "短反馈",
+        "收集解锁"
+      ],
+      "loop_steps": [
+        "spawn_items",
+        "merge_same_items",
+        "create_higher_item",
+        "complete_order_or_goal",
+        "unlock_more_items"
+      ],
+      "required_modules": [
+        "module.item_spawn",
+        "module.merge_units",
+        "module.goal_condition",
+        "module.unlock_tree",
+        "module.board_grid"
+      ],
+      "optional_modules": [
+        "module.order_system",
+        "module.energy_system",
+        "module.random_reward",
+        "module.collection_book"
+      ],
+      "default_runtime": {
+        "camera": "top_down_board",
+        "placeholder_style": "colored_blocks_on_grid",
+        "win_condition": "complete_orders_or_collection_goal",
+        "fail_condition": "board_full_or_energy_empty"
+      },
+      "best_for": [
+        "merge_game",
+        "2048_like",
+        "merge_mansion_like"
+      ],
+      "aliases": [
+        "合成",
+        "2048",
+        "Merge",
+        "消消合成",
+        "合并"
+      ],
+      "fusion_tags": [
+        "auto_battler",
+        "idle_incremental",
+        "build_expand"
+      ],
+      "avoid_with": [
+        "high_precision_action"
+      ],
+      "skeleton_output": [
+        "merge_board",
+        "spawn_button",
+        "merge_rules",
+        "goal_orders"
+      ]
+    },
+    {
+      "id": "core_loop.idle_incremental",
+      "name": "Idle Incremental",
+      "description": "系统自动产出资源，玩家定期花费资源购买升级，形成数值复利和阶段解锁。",
+      "experience_intent": [
+        "低操作压力",
+        "持续增长",
+        "复利升级",
+        "长期目标"
+      ],
+      "loop_steps": [
+        "auto_income",
+        "spend_resource",
+        "buy_upgrade",
+        "increase_income",
+        "unlock_milestone"
+      ],
+      "required_modules": [
+        "module.idle_income",
+        "module.resource_system",
+        "module.upgrade_system",
+        "module.unlock_tree",
+        "module.milestone_reward"
+      ],
+      "optional_modules": [
+        "module.prestige_system",
+        "module.collection_book",
+        "module.quest_system",
+        "module.event_bonus"
+      ],
+      "default_runtime": {
+        "camera": "ui_or_top_down",
+        "placeholder_style": "counters_buttons_simple_icons",
+        "win_condition": "reach_milestone",
+        "fail_condition": "none"
+      },
+      "best_for": [
+        "idle_game",
+        "incremental_game",
+        "clicker"
+      ],
+      "aliases": [
+        "放置",
+        "挂机",
+        "Clicker",
+        "Idle",
+        "增量"
+      ],
+      "fusion_tags": [
+        "factory_expansion",
+        "build_expand",
+        "merge_synthesis"
+      ],
+      "avoid_with": [
+        "competitive_pvp"
+      ],
+      "skeleton_output": [
+        "income_counter",
+        "upgrade_buttons",
+        "milestones"
+      ]
+    }
+  ],
+  "modules": [
+    {
+      "id": "module.enemy_spawn",
+      "name": "Enemy Spawn",
+      "category": "enemy",
+      "description": "按时间、波次、区域或事件生成敌人。",
+      "runtime_components": [
+        "Spawner",
+        "SpawnSchedule",
+        "EnemyPrefabRef"
+      ],
+      "default_entities": [
+        {
+          "id": "enemy_basic",
+          "type": "enemy",
+          "shape": "circle",
+          "stats": {
+            "hp": 10,
+            "speed": 1.0,
+            "damage": 1
+          }
+        }
+      ],
+      "default_params": {
+        "spawn_interval": 1.2,
+        "enemy_count": 10,
+        "spawn_curve": "linear"
+      },
+      "inputs": [
+        "spawn_point",
+        "enemy_table"
+      ],
+      "outputs": [
+        "enemy_instances"
+      ],
+      "works_with_loops": [
+        "core_loop.wave_defense",
+        "core_loop.survival_growth",
+        "core_loop.tactical_turn"
+      ],
+      "requires": [],
+      "conflicts": [],
+      "tuning_knobs": [
+        "spawn_interval",
+        "enemy_count",
+        "enemy_hp_curve",
+        "enemy_speed_curve"
+      ]
+    },
+    {
+      "id": "module.path_or_lane",
+      "name": "Path or Lane",
+      "category": "map",
+      "description": "定义敌人或单位移动路线，可为单路径、多路径、横向车道或网格路线。",
+      "runtime_components": [
+        "Path",
+        "Waypoint",
+        "Lane"
+      ],
+      "default_entities": [
+        {
+          "id": "path_main",
+          "type": "path",
+          "shape": "line"
+        }
+      ],
+      "default_params": {
+        "lane_count": 1,
+        "path_length": 100,
+        "branching": false
+      },
+      "inputs": [
+        "map_bounds"
+      ],
+      "outputs": [
+        "move_route"
+      ],
+      "works_with_loops": [
+        "core_loop.wave_defense",
+        "core_loop.runner_avoidance"
+      ],
+      "requires": [],
+      "conflicts": [],
+      "tuning_knobs": [
+        "lane_count",
+        "path_length",
+        "branch_count"
+      ]
+    },
+    {
+      "id": "module.defense_action",
+      "name": "Defense Action",
+      "category": "combat",
+      "description": "玩家通过建造、摆放、释放技能或操控单位来阻止威胁接近目标。",
+      "runtime_components": [
+        "DefenseController",
+        "TargetingSystem"
+      ],
+      "default_entities": [],
+      "default_params": {
+        "defense_mode": "place_units",
+        "target_priority": "nearest_to_goal"
+      },
+      "inputs": [
+        "enemy_instances",
+        "player_action"
+      ],
+      "outputs": [
+        "damage_events"
+      ],
+      "works_with_loops": [
+        "core_loop.wave_defense",
+        "core_loop.build_expand"
+      ],
+      "requires": [],
+      "conflicts": [],
+      "tuning_knobs": [
+        "target_priority",
+        "defense_range",
+        "damage_per_action"
+      ]
+    },
+    {
+      "id": "module.tower_building",
+      "name": "Tower Building",
+      "category": "combat",
+      "description": "玩家在合法建造点花费资源放置防御塔。",
+      "runtime_components": [
+        "BuildPoint",
+        "BuildMenu",
+        "TowerFactory"
+      ],
+      "default_entities": [
+        {
+          "id": "tower_basic",
+          "type": "tower",
+          "shape": "triangle",
+          "stats": {
+            "damage": 2,
+            "range": 4,
+            "cooldown": 1.0,
+            "cost": 10
+          }
+        }
+      ],
+      "default_params": {
+        "build_points": 6,
+        "starting_gold": 30,
+        "allow_sell": true
+      },
+      "inputs": [
+        "resource.gold",
+        "build_points"
+      ],
+      "outputs": [
+        "tower_instances"
+      ],
+      "works_with_loops": [
+        "core_loop.wave_defense"
+      ],
+      "requires": [
+        "module.reward_system"
+      ],
+      "conflicts": [],
+      "tuning_knobs": [
+        "tower_cost",
+        "build_point_count",
+        "sell_refund_rate"
+      ]
+    },
+    {
+      "id": "module.tower_attack",
+      "name": "Tower Attack",
+      "category": "combat",
+      "description": "防御塔自动搜索范围内目标并发射投射物、光束或造成范围伤害。",
+      "runtime_components": [
+        "TowerAI",
+        "Projectile",
+        "DamageSystem"
+      ],
+      "default_entities": [
+        {
+          "id": "projectile_basic",
+          "type": "projectile",
+          "shape": "small_circle",
+          "stats": {
+            "speed": 8,
+            "damage": 2
+          }
+        }
+      ],
+      "default_params": {
+        "targeting": "nearest_to_goal",
+        "projectile_speed": 8,
+        "damage_type": "physical"
+      },
+      "inputs": [
+        "tower_instances",
+        "enemy_instances"
+      ],
+      "outputs": [
+        "enemy_damage"
+      ],
+      "works_with_loops": [
+        "core_loop.wave_defense"
+      ],
+      "requires": [
+        "module.tower_building"
+      ],
+      "conflicts": [],
+      "tuning_knobs": [
+        "damage",
+        "range",
+        "cooldown",
+        "aoe_radius"
+      ]
+    },
+    {
+      "id": "module.reward_system",
+      "name": "Reward System",
+      "category": "economy",
+      "description": "在击杀、通关、回合结束或达成目标时发放资源、卡牌、经验或道具。",
+      "runtime_components": [
+        "RewardTable",
+        "RewardTrigger"
+      ],
+      "default_entities": [
+        {
+          "id": "gold",
+          "type": "resource",
+          "shape": "counter"
+        }
+      ],
+      "default_params": {
+        "reward_type": "gold",
+        "kill_reward": 1,
+        "wave_reward": 10
+      },
+      "inputs": [
+        "combat_result",
+        "objective_result"
+      ],
+      "outputs": [
+        "resource_delta",
+        "reward_choice"
+      ],
+      "works_with_loops": [
+        "core_loop.wave_defense",
+        "core_loop.deck_builder",
+        "core_loop.auto_battler",
+        "core_loop.survival_growth"
+      ],
+      "requires": [],
+      "conflicts": [],
+      "tuning_knobs": [
+        "kill_reward",
+        "round_reward",
+        "reward_choices_count"
+      ]
+    },
+    {
+      "id": "module.upgrade_system",
+      "name": "Upgrade System",
+      "category": "progression",
+      "description": "玩家花费资源或通过选择获得能力提升。",
+      "runtime_components": [
+        "UpgradeDefinition",
+        "UpgradeApplier"
+      ],
+      "default_entities": [],
+      "default_params": {
+        "upgrade_mode": "spend_resource",
+        "max_level": 3,
+        "cost_curve": [
+          10,
+          20,
+          40
+        ]
+      },
+      "inputs": [
+        "resource_delta",
+        "upgrade_target"
+      ],
+      "outputs": [
+        "stat_modifier"
+      ],
+      "works_with_loops": [
+        "core_loop.wave_defense",
+        "core_loop.build_expand",
+        "core_loop.idle_incremental"
+      ],
+      "requires": [
+        "module.reward_system"
+      ],
+      "conflicts": [],
+      "tuning_knobs": [
+        "cost_curve",
+        "stat_growth",
+        "max_level"
+      ]
+    },
+    {
+      "id": "module.failure_condition",
+      "name": "Failure Condition",
+      "category": "rule",
+      "description": "定义游戏失败条件，例如基地生命归零、玩家死亡、步数耗尽、棋盘满。",
+      "runtime_components": [
+        "FailConditionChecker"
+      ],
+      "default_entities": [],
+      "default_params": {
+        "fail_condition": "hp_zero"
+      },
+      "inputs": [
+        "game_state"
+      ],
+      "outputs": [
+        "game_over"
+      ],
+      "works_with_loops": [
+        "core_loop.wave_defense",
+        "core_loop.survival_growth",
+        "core_loop.puzzle_solve"
+      ],
+      "requires": [],
+      "conflicts": [],
+      "tuning_knobs": [
+        "hp",
+        "step_limit",
+        "time_limit"
+      ]
+    },
+    {
+      "id": "module.base_hp",
+      "name": "Base HP",
+      "category": "rule",
+      "description": "防守目标拥有生命值，敌人抵达目标时扣除。",
+      "runtime_components": [
+        "Base",
+        "BaseDamageTrigger"
+      ],
+      "default_entities": [
+        {
+          "id": "player_base",
+          "type": "base",
+          "shape": "square",
+          "stats": {
+            "hp": 20
+          }
+        }
+      ],
+      "default_params": {
+        "base_hp": 20,
+        "damage_per_enemy": 1
+      },
+      "inputs": [
+        "enemy_reach_goal"
+      ],
+      "outputs": [
+        "base_hp_delta"
+      ],
+      "works_with_loops": [
+        "core_loop.wave_defense",
+        "core_loop.build_expand"
+      ],
+      "requires": [
+        "module.path_or_lane"
+      ],
+      "conflicts": [],
+      "tuning_knobs": [
+        "base_hp",
+        "damage_per_enemy"
+      ]
+    },
+    {
+      "id": "module.hero_control",
+      "name": "Hero Control",
+      "category": "player",
+      "description": "增加可移动或可指挥英雄单位，提供主动技能和局部补位能力。",
+      "runtime_components": [
+        "HeroController",
+        "HeroAbility"
+      ],
+      "default_entities": [
+        {
+          "id": "hero",
+          "type": "player_unit",
+          "shape": "capsule",
+          "stats": {
+            "hp": 30,
+            "damage": 3,
+            "speed": 3
+          }
+        }
+      ],
+      "default_params": {
+        "control_mode": "click_to_move",
+        "skill_cooldown": 8
+      },
+      "inputs": [
+        "player_input",
+        "combat_state"
+      ],
+      "outputs": [
+        "hero_damage",
+        "hero_position"
+      ],
+      "works_with_loops": [
+        "core_loop.wave_defense",
+        "core_loop.survival_growth",
+        "core_loop.tactical_turn"
+      ],
+      "requires": [],
+      "conflicts": [],
+      "tuning_knobs": [
+        "hero_hp",
+        "hero_damage",
+        "skill_cooldown"
+      ]
+    },
+    {
+      "id": "module.boss_wave",
+      "name": "Boss Wave",
+      "category": "enemy",
+      "description": "在关键波次或时间点生成高血量、高机制强度的敌人。",
+      "runtime_components": [
+        "BossSpawner",
+        "BossAbility"
+      ],
+      "default_entities": [
+        {
+          "id": "boss",
+          "type": "enemy_boss",
+          "shape": "large_circle",
+          "stats": {
+            "hp": 120,
+            "speed": 0.5,
+            "damage": 5
+          }
+        }
+      ],
+      "default_params": {
+        "boss_interval": 5,
+        "boss_hp_multiplier": 8
+      },
+      "inputs": [
+        "round_index",
+        "timer"
+      ],
+      "outputs": [
+        "boss_instance"
+      ],
+      "works_with_loops": [
+        "core_loop.wave_defense",
+        "core_loop.survival_growth",
+        "core_loop.auto_battler"
+      ],
+      "requires": [
+        "module.enemy_spawn"
+      ],
+      "conflicts": [],
+      "tuning_knobs": [
+        "boss_hp",
+        "boss_spawn_round",
+        "boss_ability_cooldown"
+      ]
+    },
+    {
+      "id": "module.player_movement",
+      "name": "Player Movement",
+      "category": "player",
+      "description": "玩家控制角色移动，可为 WASD、点击移动、拖拽或车道切换。",
+      "runtime_components": [
+        "MovementController"
+      ],
+      "default_entities": [
+        {
+          "id": "player",
+          "type": "player",
+          "shape": "capsule",
+          "stats": {
+            "hp": 20,
+            "speed": 4
+          }
+        }
+      ],
+      "default_params": {
+        "movement_mode": "wasd",
+        "speed": 4
+      },
+      "inputs": [
+        "player_input"
+      ],
+      "outputs": [
+        "player_position"
+      ],
+      "works_with_loops": [
+        "core_loop.survival_growth",
+        "core_loop.runner_avoidance"
+      ],
+      "requires": [],
+      "conflicts": [],
+      "tuning_knobs": [
+        "speed",
+        "acceleration",
+        "turn_rate"
+      ]
+    },
+    {
+      "id": "module.attack_system",
+      "name": "Attack System",
+      "category": "combat",
+      "description": "定义玩家或单位的攻击行为，包括手动攻击、自动攻击、近战、投射物、AOE。",
+      "runtime_components": [
+        "AttackController",
+        "DamageSystem"
+      ],
+      "default_entities": [
+        {
+          "id": "attack_basic",
+          "type": "weapon",
+          "shape": "line",
+          "stats": {
+            "damage": 2,
+            "cooldown": 0.8
+          }
+        }
+      ],
+      "default_params": {
+        "attack_mode": "auto_nearest",
+        "damage": 2,
+        "cooldown": 0.8
+      },
+      "inputs": [
+        "player_position",
+        "enemy_instances"
+      ],
+      "outputs": [
+        "damage_events"
+      ],
+      "works_with_loops": [
+        "core_loop.survival_growth",
+        "core_loop.wave_defense",
+        "core_loop.tactical_turn"
+      ],
+      "requires": [],
+      "conflicts": [],
+      "tuning_knobs": [
+        "damage",
+        "cooldown",
+        "range",
+        "projectile_count"
+      ]
+    },
+    {
+      "id": "module.auto_attack",
+      "name": "Auto Attack",
+      "category": "combat",
+      "description": "角色或单位自动攻击附近目标，降低操作压力，突出走位与成长。",
+      "runtime_components": [
+        "AutoTargeting",
+        "AttackTimer"
+      ],
+      "default_entities": [],
+      "default_params": {
+        "targeting": "nearest",
+        "auto_fire_interval": 0.8
+      },
+      "inputs": [
+        "enemy_instances"
+      ],
+      "outputs": [
+        "damage_events"
+      ],
+      "works_with_loops": [
+        "core_loop.survival_growth",
+        "core_loop.wave_defense"
+      ],
+      "requires": [
+        "module.attack_system"
+      ],
+      "conflicts": [],
+      "tuning_knobs": [
+        "auto_fire_interval",
+        "targeting",
+        "range"
+      ]
+    },
+    {
+      "id": "module.exp_drop",
+      "name": "EXP Drop",
+      "category": "progression",
+      "description": "敌人死亡后掉落经验点，玩家收集后升级。",
+      "runtime_components": [
+        "DropTable",
+        "Pickup",
+        "ExperienceCounter"
+      ],
+      "default_entities": [
+        {
+          "id": "exp_orb",
+          "type": "pickup",
+          "shape": "small_dot",
+          "stats": {
+            "value": 1
+          }
+        }
+      ],
+      "default_params": {
+        "exp_per_enemy": 1,
+        "pickup_radius": 1.5,
+        "level_curve": [
+          5,
+          10,
+          18,
+          28
+        ]
+      },
+      "inputs": [
+        "enemy_death"
+      ],
+      "outputs": [
+        "exp_orbs",
+        "level_progress"
+      ],
+      "works_with_loops": [
+        "core_loop.survival_growth"
+      ],
+      "requires": [
+        "module.enemy_spawn"
+      ],
+      "conflicts": [],
+      "tuning_knobs": [
+        "exp_per_enemy",
+        "level_curve",
+        "pickup_radius"
+      ]
+    },
+    {
+      "id": "module.random_upgrade_choice",
+      "name": "Random Upgrade Choice",
+      "category": "progression",
+      "description": "升级或回合结束时提供随机多选一能力，形成肉鸽 Build。",
+      "runtime_components": [
+        "UpgradePool",
+        "ChoicePanel",
+        "ModifierApplier"
+      ],
+      "default_entities": [],
+      "default_params": {
+        "choice_count": 3,
+        "rarity_weights": {
+          "common": 70,
+          "rare": 25,
+          "epic": 5
+        }
+      },
+      "inputs": [
+        "level_up_event",
+        "reward_event"
+      ],
+      "outputs": [
+        "chosen_modifier"
+      ],
+      "works_with_loops": [
+        "core_loop.survival_growth",
+        "core_loop.wave_defense",
+        "core_loop.runner_avoidance"
+      ],
+      "requires": [],
+      "conflicts": [],
+      "tuning_knobs": [
+        "choice_count",
+        "rarity_weights",
+        "upgrade_pool_size"
+      ]
+    },
+    {
+      "id": "module.weapon_evolution",
+      "name": "Weapon Evolution",
+      "category": "progression",
+      "description": "特定武器或能力达到条件后进化为更强形态。",
+      "runtime_components": [
+        "EvolutionRule",
+        "AbilityTransform"
+      ],
+      "default_entities": [],
+      "default_params": {
+        "evolution_requires_level": 5,
+        "evolution_requires_item": false
+      },
+      "inputs": [
+        "weapon_level",
+        "inventory_state"
+      ],
+      "outputs": [
+        "upgraded_weapon"
+      ],
+      "works_with_loops": [
+        "core_loop.survival_growth"
+      ],
+      "requires": [
+        "module.random_upgrade_choice"
+      ],
+      "conflicts": [],
+      "tuning_knobs": [
+        "required_level",
+        "evolution_power_multiplier"
+      ]
+    },
+    {
+      "id": "module.chest_reward",
+      "name": "Chest Reward",
+      "category": "reward",
+      "description": "击败精英或 Boss 后掉落宝箱，提供高价值随机奖励。",
+      "runtime_components": [
+        "Chest",
+        "LootRoll"
+      ],
+      "default_entities": [
+        {
+          "id": "chest",
+          "type": "reward_object",
+          "shape": "cube"
+        }
+      ],
+      "default_params": {
+        "reward_count": 1,
+        "rare_chance": 0.2
+      },
+      "inputs": [
+        "boss_death",
+        "elite_death"
+      ],
+      "outputs": [
+        "loot_choices"
+      ],
+      "works_with_loops": [
+        "core_loop.survival_growth",
+        "core_loop.wave_defense"
+      ],
+      "requires": [],
+      "conflicts": [],
+      "tuning_knobs": [
+        "rare_chance",
+        "reward_count"
+      ]
+    },
+    {
+      "id": "module.card_system",
+      "name": "Card System",
+      "category": "card",
+      "description": "定义卡牌实体、费用、效果、目标和使用条件。",
+      "runtime_components": [
+        "CardDefinition",
+        "CardResolver"
+      ],
+      "default_entities": [
+        {
+          "id": "card_boost",
+          "type": "card",
+          "shape": "rectangle",
+          "effect": "increase_damage"
+        }
+      ],
+      "default_params": {
+        "card_pool_size": 12,
+        "card_cost_mode": "energy_or_free",
+        "hand_size": 5
+      },
+      "inputs": [
+        "player_choice",
+        "game_state"
+      ],
+      "outputs": [
+        "card_effect_event"
+      ],
+      "works_with_loops": [
+        "core_loop.deck_builder",
+        "core_loop.wave_defense",
+        "core_loop.tactical_turn"
+      ],
+      "requires": [],
+      "conflicts": [],
+      "tuning_knobs": [
+        "hand_size",
+        "card_pool_size",
+        "effect_power"
+      ]
+    },
+    {
+      "id": "module.deck_hand",
+      "name": "Deck and Hand",
+      "category": "card",
+      "description": "管理牌库、手牌、弃牌堆和洗牌。",
+      "runtime_components": [
+        "Deck",
+        "Hand",
+        "DiscardPile"
+      ],
+      "default_entities": [],
+      "default_params": {
+        "deck_size": 10,
+        "hand_size": 5,
+        "draw_per_turn": 5,
+        "shuffle_when_empty": true
+      },
+      "inputs": [
+        "deck_definition"
+      ],
+      "outputs": [
+        "hand_cards"
+      ],
+      "works_with_loops": [
+        "core_loop.deck_builder",
+        "core_loop.tactical_turn"
+      ],
+      "requires": [
+        "module.card_system"
+      ],
+      "conflicts": [],
+      "tuning_knobs": [
+        "deck_size",
+        "hand_size",
+        "draw_per_turn"
+      ]
+    },
+    {
+      "id": "module.card_effect",
+      "name": "Card Effect",
+      "category": "card",
+      "description": "把卡牌效果转化为数值、召唤、攻击、防御、修改规则或局面变化。",
+      "runtime_components": [
+        "EffectResolver",
+        "TargetSelector"
+      ],
+      "default_entities": [],
+      "default_params": {
+        "effect_types": [
+          "damage",
+          "buff",
+          "resource_gain",
+          "summon"
+        ]
+      },
+      "inputs": [
+        "played_card",
+        "target"
+      ],
+      "outputs": [
+        "effect_result"
+      ],
+      "works_with_loops": [
+        "core_loop.deck_builder",
+        "core_loop.wave_defense",
+        "core_loop.tactical_turn"
+      ],
+      "requires": [
+        "module.card_system"
+      ],
+      "conflicts": [],
+      "tuning_knobs": [
+        "effect_power",
+        "target_rules",
+        "duration"
+      ]
+    },
+    {
+      "id": "module.energy_system",
+      "name": "Energy System",
+      "category": "economy",
+      "description": "每回合或每阶段给予有限能量，用于限制卡牌或技能使用。",
+      "runtime_components": [
+        "EnergyCounter",
+        "CostChecker"
+      ],
+      "default_entities": [
+        {
+          "id": "energy",
+          "type": "resource",
+          "shape": "counter"
+        }
+      ],
+      "default_params": {
+        "energy_per_turn": 3,
+        "max_energy": 3
+      },
+      "inputs": [
+        "turn_start",
+        "card_cost"
+      ],
+      "outputs": [
+        "can_play_card"
+      ],
+      "works_with_loops": [
+        "core_loop.deck_builder",
+        "core_loop.tactical_turn"
+      ],
+      "requires": [],
+      "conflicts": [],
+      "tuning_knobs": [
+        "energy_per_turn",
+        "max_energy",
+        "cost_curve"
+      ]
+    },
+    {
+      "id": "module.shop_system",
+      "name": "Shop System",
+      "category": "economy",
+      "description": "在回合、波次或关卡之间提供随机或固定商品。",
+      "runtime_components": [
+        "ShopInventory",
+        "PurchaseResolver"
+      ],
+      "default_entities": [
+        {
+          "id": "shop_item",
+          "type": "shop_item",
+          "shape": "rectangle"
+        }
+      ],
+      "default_params": {
+        "shop_slots": 3,
+        "reroll_cost": 2
+      },
+      "inputs": [
+        "resource_state",
+        "shop_pool"
+      ],
+      "outputs": [
+        "purchased_item"
+      ],
+      "works_with_loops": [
+        "core_loop.deck_builder",
+        "core_loop.auto_battler",
+        "core_loop.wave_defense"
+      ],
+      "requires": [],
+      "conflicts": [],
+      "tuning_knobs": [
+        "shop_slots",
+        "reroll_cost",
+        "price_curve"
+      ]
+    },
+    {
+      "id": "module.relic_system",
+      "name": "Relic System",
+      "category": "progression",
+      "description": "提供持续生效的被动规则修改器，用于改变 Build 方向。",
+      "runtime_components": [
+        "RelicDefinition",
+        "PassiveModifierSystem"
+      ],
+      "default_entities": [
+        {
+          "id": "relic_generic",
+          "type": "relic",
+          "shape": "diamond"
+        }
+      ],
+      "default_params": {
+        "max_relics": 6,
+        "rarity_weights": {
+          "common": 65,
+          "rare": 30,
+          "legendary": 5
+        }
+      },
+      "inputs": [
+        "reward_choice"
+      ],
+      "outputs": [
+        "passive_modifier"
+      ],
+      "works_with_loops": [
+        "core_loop.deck_builder",
+        "core_loop.survival_growth",
+        "core_loop.wave_defense"
+      ],
+      "requires": [],
+      "conflicts": [],
+      "tuning_knobs": [
+        "max_relics",
+        "modifier_strength",
+        "rarity_weights"
+      ]
+    },
+    {
+      "id": "module.score_multiplier",
+      "name": "Score Multiplier",
+      "category": "scoring",
+      "description": "通过连击、牌型、组合或条件触发倍率，制造爆分体验。",
+      "runtime_components": [
+        "ScoreCalculator",
+        "MultiplierStack"
+      ],
+      "default_entities": [
+        {
+          "id": "score",
+          "type": "resource",
+          "shape": "counter"
+        }
+      ],
+      "default_params": {
+        "base_score": 10,
+        "multiplier_start": 1,
+        "multiplier_cap": 20
+      },
+      "inputs": [
+        "combo_result",
+        "card_result"
+      ],
+      "outputs": [
+        "score_delta"
+      ],
+      "works_with_loops": [
+        "core_loop.deck_builder",
+        "core_loop.puzzle_solve"
+      ],
+      "requires": [],
+      "conflicts": [],
+      "tuning_knobs": [
+        "base_score",
+        "multiplier_growth",
+        "multiplier_cap"
+      ]
+    },
+    {
+      "id": "module.enemy_intent",
+      "name": "Enemy Intent",
+      "category": "enemy",
+      "description": "敌人提前展示下一步行动，让玩家进行可预判决策。",
+      "runtime_components": [
+        "IntentGenerator",
+        "IntentUI"
+      ],
+      "default_entities": [],
+      "default_params": {
+        "show_intent": true,
+        "intent_accuracy": 1.0
+      },
+      "inputs": [
+        "enemy_ai_state"
+      ],
+      "outputs": [
+        "intent_preview"
+      ],
+      "works_with_loops": [
+        "core_loop.deck_builder",
+        "core_loop.tactical_turn"
+      ],
+      "requires": [
+        "module.enemy_spawn"
+      ],
+      "conflicts": [],
+      "tuning_knobs": [
+        "intent_accuracy",
+        "preview_turns"
+      ]
+    },
+    {
+      "id": "module.progression_choice",
+      "name": "Progression Choice",
+      "category": "progression",
+      "description": "在奖励阶段给予卡牌、升级、资源或路线选择。",
+      "runtime_components": [
+        "ChoiceGenerator",
+        "ChoiceResolver"
+      ],
+      "default_entities": [],
+      "default_params": {
+        "choice_count": 3,
+        "choice_type": "card_or_upgrade"
+      },
+      "inputs": [
+        "reward_event"
+      ],
+      "outputs": [
+        "progression_delta"
+      ],
+      "works_with_loops": [
+        "core_loop.deck_builder",
+        "core_loop.survival_growth",
+        "core_loop.wave_defense"
+      ],
+      "requires": [],
+      "conflicts": [],
+      "tuning_knobs": [
+        "choice_count",
+        "pool_size",
+        "rarity_weights"
+      ]
+    },
+    {
+      "id": "module.unit_pool",
+      "name": "Unit Pool",
+      "category": "unit",
+      "description": "定义可购买、可召唤或可加入阵容的单位池。",
+      "runtime_components": [
+        "UnitDefinition",
+        "UnitPool"
+      ],
+      "default_entities": [
+        {
+          "id": "unit_basic",
+          "type": "unit",
+          "shape": "circle",
+          "stats": {
+            "hp": 20,
+            "damage": 3
+          }
+        }
+      ],
+      "default_params": {
+        "pool_size": 12,
+        "rarity_tiers": [
+          1,
+          2,
+          3
+        ]
+      },
+      "inputs": [
+        "shop_roll"
+      ],
+      "outputs": [
+        "candidate_units"
+      ],
+      "works_with_loops": [
+        "core_loop.auto_battler",
+        "core_loop.tactical_turn"
+      ],
+      "requires": [],
+      "conflicts": [],
+      "tuning_knobs": [
+        "pool_size",
+        "rarity_weights",
+        "unit_stat_curve"
+      ]
+    },
+    {
+      "id": "module.board_grid",
+      "name": "Board Grid",
+      "category": "map",
+      "description": "提供棋盘或格子空间，用于摆放单位、合成、移动或解谜。",
+      "runtime_components": [
+        "Grid",
+        "CellOccupancy"
+      ],
+      "default_entities": [
+        {
+          "id": "grid_cell",
+          "type": "cell",
+          "shape": "square"
+        }
+      ],
+      "default_params": {
+        "width": 6,
+        "height": 4,
+        "cell_size": 1
+      },
+      "inputs": [
+        "map_bounds"
+      ],
+      "outputs": [
+        "grid_state"
+      ],
+      "works_with_loops": [
+        "core_loop.auto_battler",
+        "core_loop.tactical_turn",
+        "core_loop.puzzle_solve",
+        "core_loop.merge_synthesis"
+      ],
+      "requires": [],
+      "conflicts": [],
+      "tuning_knobs": [
+        "width",
+        "height",
+        "blocked_cells"
+      ]
+    },
+    {
+      "id": "module.auto_combat",
+      "name": "Auto Combat",
+      "category": "combat",
+      "description": "战斗阶段自动进行，单位按 AI、距离、仇恨或技能规则行动。",
+      "runtime_components": [
+        "AutoCombatSystem",
+        "UnitAI"
+      ],
+      "default_entities": [],
+      "default_params": {
+        "round_time_limit": 30,
+        "targeting": "nearest"
+      },
+      "inputs": [
+        "unit_positions",
+        "enemy_units"
+      ],
+      "outputs": [
+        "combat_result"
+      ],
+      "works_with_loops": [
+        "core_loop.auto_battler"
+      ],
+      "requires": [
+        "module.unit_pool",
+        "module.board_grid"
+      ],
+      "conflicts": [],
+      "tuning_knobs": [
+        "round_time_limit",
+        "targeting",
+        "damage_scale"
+      ]
+    },
+    {
+      "id": "module.economy_system",
+      "name": "Economy System",
+      "category": "economy",
+      "description": "管理金币、能量、人口、分数等资源的获得与消耗。",
+      "runtime_components": [
+        "ResourceWallet",
+        "CostSystem"
+      ],
+      "default_entities": [
+        {
+          "id": "gold",
+          "type": "resource",
+          "shape": "counter"
+        }
+      ],
+      "default_params": {
+        "starting_gold": 10,
+        "income_per_round": 5
+      },
+      "inputs": [
+        "reward_event",
+        "purchase_event"
+      ],
+      "outputs": [
+        "resource_state"
+      ],
+      "works_with_loops": [
+        "core_loop.auto_battler",
+        "core_loop.wave_defense",
+        "core_loop.build_expand"
+      ],
+      "requires": [],
+      "conflicts": [],
+      "tuning_knobs": [
+        "starting_gold",
+        "income_per_round",
+        "price_curve"
+      ]
+    },
+    {
+      "id": "module.round_progression",
+      "name": "Round Progression",
+      "category": "rule",
+      "description": "管理回合、关卡、波次或阶段的推进。",
+      "runtime_components": [
+        "RoundManager"
+      ],
+      "default_entities": [],
+      "default_params": {
+        "round_count": 10,
+        "difficulty_curve": "linear"
+      },
+      "inputs": [
+        "round_result"
+      ],
+      "outputs": [
+        "next_round_state"
+      ],
+      "works_with_loops": [
+        "core_loop.auto_battler",
+        "core_loop.wave_defense",
+        "core_loop.deck_builder"
+      ],
+      "requires": [],
+      "conflicts": [],
+      "tuning_knobs": [
+        "round_count",
+        "difficulty_curve"
+      ]
+    },
+    {
+      "id": "module.merge_units",
+      "name": "Merge Units",
+      "category": "progression",
+      "description": "两个或多个相同等级对象合成为更高等级对象。",
+      "runtime_components": [
+        "MergeRule",
+        "MergeResolver"
+      ],
+      "default_entities": [],
+      "default_params": {
+        "merge_count": 2,
+        "max_tier": 5
+      },
+      "inputs": [
+        "matching_items"
+      ],
+      "outputs": [
+        "higher_tier_item"
+      ],
+      "works_with_loops": [
+        "core_loop.auto_battler",
+        "core_loop.merge_synthesis"
+      ],
+      "requires": [],
+      "conflicts": [],
+      "tuning_knobs": [
+        "merge_count",
+        "max_tier",
+        "stat_gain_per_tier"
+      ]
+    },
+    {
+      "id": "module.faction_synergy",
+      "name": "Faction Synergy",
+      "category": "progression",
+      "description": "根据同阵营、职业、标签数量激活额外效果。",
+      "runtime_components": [
+        "SynergyCounter",
+        "SynergyModifier"
+      ],
+      "default_entities": [],
+      "default_params": {
+        "synergy_thresholds": [
+          2,
+          4,
+          6
+        ],
+        "modifier_type": "stat_bonus"
+      },
+      "inputs": [
+        "team_composition"
+      ],
+      "outputs": [
+        "team_modifier"
+      ],
+      "works_with_loops": [
+        "core_loop.auto_battler",
+        "core_loop.deck_builder"
+      ],
+      "requires": [
+        "module.unit_pool"
+      ],
+      "conflicts": [],
+      "tuning_knobs": [
+        "thresholds",
+        "modifier_strength"
+      ]
+    },
+    {
+      "id": "module.equipment_system",
+      "name": "Equipment System",
+      "category": "progression",
+      "description": "为单位或角色提供装备栏和装备属性。",
+      "runtime_components": [
+        "EquipmentSlot",
+        "ItemModifier"
+      ],
+      "default_entities": [
+        {
+          "id": "equipment_basic",
+          "type": "equipment",
+          "shape": "small_rectangle"
+        }
+      ],
+      "default_params": {
+        "slots": [
+          "weapon",
+          "armor"
+        ],
+        "max_items": 3
+      },
+      "inputs": [
+        "item_reward",
+        "unit_selection"
+      ],
+      "outputs": [
+        "unit_modifier"
+      ],
+      "works_with_loops": [
+        "core_loop.auto_battler",
+        "core_loop.tactical_turn",
+        "core_loop.survival_growth"
+      ],
+      "requires": [],
+      "conflicts": [],
+      "tuning_knobs": [
+        "slot_count",
+        "modifier_strength"
+      ]
+    },
+    {
+      "id": "module.unit_system",
+      "name": "Unit System",
+      "category": "unit",
+      "description": "定义可控制或 AI 控制的单位、生命、行动、阵营和状态。",
+      "runtime_components": [
+        "Unit",
+        "Health",
+        "Team"
+      ],
+      "default_entities": [
+        {
+          "id": "unit_player",
+          "type": "player_unit",
+          "shape": "circle",
+          "stats": {
+            "hp": 10,
+            "move": 3,
+            "damage": 2
+          }
+        }
+      ],
+      "default_params": {
+        "player_units": 3,
+        "enemy_units": 4
+      },
+      "inputs": [
+        "scenario_definition"
+      ],
+      "outputs": [
+        "unit_instances"
+      ],
+      "works_with_loops": [
+        "core_loop.tactical_turn",
+        "core_loop.auto_battler"
+      ],
+      "requires": [
+        "module.board_grid"
+      ],
+      "conflicts": [],
+      "tuning_knobs": [
+        "unit_count",
+        "hp",
+        "move_range",
+        "damage"
+      ]
+    },
+    {
+      "id": "module.action_point",
+      "name": "Action Point",
+      "category": "rule",
+      "description": "单位每回合拥有有限行动点，用于移动、攻击或释放技能。",
+      "runtime_components": [
+        "ActionPointCounter",
+        "ActionCost"
+      ],
+      "default_entities": [],
+      "default_params": {
+        "ap_per_turn": 2,
+        "move_cost": 1,
+        "attack_cost": 1
+      },
+      "inputs": [
+        "turn_start",
+        "action_request"
+      ],
+      "outputs": [
+        "can_act",
+        "ap_remaining"
+      ],
+      "works_with_loops": [
+        "core_loop.tactical_turn"
+      ],
+      "requires": [
+        "module.unit_system"
+      ],
+      "conflicts": [],
+      "tuning_knobs": [
+        "ap_per_turn",
+        "action_costs"
+      ]
+    },
+    {
+      "id": "module.enemy_ai",
+      "name": "Enemy AI",
+      "category": "enemy",
+      "description": "敌人根据简单策略移动、攻击、追击、保护或完成目标。",
+      "runtime_components": [
+        "AIController",
+        "BehaviorRule"
+      ],
+      "default_entities": [],
+      "default_params": {
+        "ai_style": "nearest_target",
+        "aggression": 1.0
+      },
+      "inputs": [
+        "unit_state",
+        "map_state"
+      ],
+      "outputs": [
+        "enemy_action"
+      ],
+      "works_with_loops": [
+        "core_loop.tactical_turn",
+        "core_loop.auto_battler",
+        "core_loop.wave_defense"
+      ],
+      "requires": [],
+      "conflicts": [],
+      "tuning_knobs": [
+        "aggression",
+        "target_priority"
+      ]
+    },
+    {
+      "id": "module.turn_order",
+      "name": "Turn Order",
+      "category": "rule",
+      "description": "定义玩家、敌人和中立单位的行动顺序。",
+      "runtime_components": [
+        "TurnManager",
+        "Initiative"
+      ],
+      "default_entities": [],
+      "default_params": {
+        "turn_mode": "player_then_enemy"
+      },
+      "inputs": [
+        "round_start"
+      ],
+      "outputs": [
+        "active_side"
+      ],
+      "works_with_loops": [
+        "core_loop.tactical_turn",
+        "core_loop.deck_builder"
+      ],
+      "requires": [],
+      "conflicts": [],
+      "tuning_knobs": [
+        "turn_mode",
+        "initiative_rule"
+      ]
+    },
+    {
+      "id": "module.goal_condition",
+      "name": "Goal Condition",
+      "category": "rule",
+      "description": "定义单局目标，例如击败敌人、到达终点、达到分数、完成订单。",
+      "runtime_components": [
+        "GoalChecker"
+      ],
+      "default_entities": [],
+      "default_params": {
+        "goal_type": "defeat_all"
+      },
+      "inputs": [
+        "game_state"
+      ],
+      "outputs": [
+        "win_event"
+      ],
+      "works_with_loops": [
+        "core_loop.tactical_turn",
+        "core_loop.puzzle_solve",
+        "core_loop.merge_synthesis"
+      ],
+      "requires": [],
+      "conflicts": [],
+      "tuning_knobs": [
+        "goal_threshold",
+        "objective_count"
+      ]
+    },
+    {
+      "id": "module.terrain_system",
+      "name": "Terrain System",
+      "category": "map",
+      "description": "格子或地图区域拥有地形属性，影响移动、攻击、防御或视野。",
+      "runtime_components": [
+        "Terrain",
+        "MovementCost"
+      ],
+      "default_entities": [
+        {
+          "id": "terrain_block",
+          "type": "terrain",
+          "shape": "square"
+        }
+      ],
+      "default_params": {
+        "terrain_types": [
+          "normal",
+          "blocked",
+          "slow"
+        ]
+      },
+      "inputs": [
+        "grid_state"
+      ],
+      "outputs": [
+        "movement_modifier"
+      ],
+      "works_with_loops": [
+        "core_loop.tactical_turn"
+      ],
+      "requires": [
+        "module.board_grid"
+      ],
+      "conflicts": [],
+      "tuning_knobs": [
+        "blocked_ratio",
+        "terrain_effect_strength"
+      ]
+    },
+    {
+      "id": "module.push_pull",
+      "name": "Push Pull",
+      "category": "combat",
+      "description": "行动可以推动或拉动单位，制造位置解谜和连锁反应。",
+      "runtime_components": [
+        "DisplacementEffect",
+        "CollisionResolver"
+      ],
+      "default_entities": [],
+      "default_params": {
+        "push_distance": 1
+      },
+      "inputs": [
+        "action_result",
+        "unit_position"
+      ],
+      "outputs": [
+        "new_position",
+        "collision_damage"
+      ],
+      "works_with_loops": [
+        "core_loop.tactical_turn",
+        "core_loop.puzzle_solve"
+      ],
+      "requires": [
+        "module.board_grid"
+      ],
+      "conflicts": [],
+      "tuning_knobs": [
+        "push_distance",
+        "collision_damage"
+      ]
+    },
+    {
+      "id": "module.skill_cooldown",
+      "name": "Skill Cooldown",
+      "category": "rule",
+      "description": "技能使用后进入冷却，限制连续释放并制造节奏。",
+      "runtime_components": [
+        "CooldownTimer",
+        "AbilityState"
+      ],
+      "default_entities": [],
+      "default_params": {
+        "default_cooldown": 3
+      },
+      "inputs": [
+        "skill_used",
+        "time_or_turn_tick"
+      ],
+      "outputs": [
+        "skill_available"
+      ],
+      "works_with_loops": [
+        "core_loop.tactical_turn",
+        "core_loop.wave_defense",
+        "core_loop.survival_growth"
+      ],
+      "requires": [],
+      "conflicts": [],
+      "tuning_knobs": [
+        "cooldown_duration",
+        "cooldown_reduction"
+      ]
+    },
+    {
+      "id": "module.resource_node",
+      "name": "Resource Node",
+      "category": "resource",
+      "description": "地图上的资源点，可被采集、连接或占领。",
+      "runtime_components": [
+        "ResourceNode",
+        "Gatherable"
+      ],
+      "default_entities": [
+        {
+          "id": "resource_node",
+          "type": "resource_node",
+          "shape": "circle",
+          "stats": {
+            "amount": 100
+          }
+        }
+      ],
+      "default_params": {
+        "node_count": 4,
+        "resource_type": "ore",
+        "yield_per_tick": 1
+      },
+      "inputs": [
+        "map_generation"
+      ],
+      "outputs": [
+        "resource_source"
+      ],
+      "works_with_loops": [
+        "core_loop.factory_expansion",
+        "core_loop.build_expand"
+      ],
+      "requires": [],
+      "conflicts": [],
+      "tuning_knobs": [
+        "node_count",
+        "yield_per_tick",
+        "resource_amount"
+      ]
+    },
+    {
+      "id": "module.production_unit",
+      "name": "Production Unit",
+      "category": "factory",
+      "description": "把输入资源加工成输出资源或物品。",
+      "runtime_components": [
+        "Machine",
+        "Recipe",
+        "ProductionTimer"
+      ],
+      "default_entities": [
+        {
+          "id": "machine_basic",
+          "type": "machine",
+          "shape": "square"
+        }
+      ],
+      "default_params": {
+        "recipe": {
+          "input": "ore",
+          "output": "plate",
+          "time": 2
+        }
+      },
+      "inputs": [
+        "input_resource"
+      ],
+      "outputs": [
+        "output_resource"
+      ],
+      "works_with_loops": [
+        "core_loop.factory_expansion"
+      ],
+      "requires": [
+        "module.resource_node"
+      ],
+      "conflicts": [],
+      "tuning_knobs": [
+        "production_time",
+        "input_count",
+        "output_count"
+      ]
+    },
+    {
+      "id": "module.transport_link",
+      "name": "Transport Link",
+      "category": "factory",
+      "description": "连接资源点、机器、仓库或建筑，实现自动运输。",
+      "runtime_components": [
+        "Link",
+        "TransportItem"
+      ],
+      "default_entities": [
+        {
+          "id": "transport_link",
+          "type": "transport",
+          "shape": "line"
+        }
+      ],
+      "default_params": {
+        "transport_speed": 1.0,
+        "capacity": 1
+      },
+      "inputs": [
+        "source",
+        "target"
+      ],
+      "outputs": [
+        "resource_transfer"
+      ],
+      "works_with_loops": [
+        "core_loop.factory_expansion"
+      ],
+      "requires": [],
+      "conflicts": [],
+      "tuning_knobs": [
+        "transport_speed",
+        "capacity"
+      ]
+    },
+    {
+      "id": "module.storage_system",
+      "name": "Storage System",
+      "category": "factory",
+      "description": "存储资源或物品，作为生产链中的缓冲。",
+      "runtime_components": [
+        "Storage",
+        "Inventory"
+      ],
+      "default_entities": [
+        {
+          "id": "storage",
+          "type": "storage",
+          "shape": "square"
+        }
+      ],
+      "default_params": {
+        "capacity": 50
+      },
+      "inputs": [
+        "resource_transfer"
+      ],
+      "outputs": [
+        "stored_resource"
+      ],
+      "works_with_loops": [
+        "core_loop.factory_expansion",
+        "core_loop.build_expand"
+      ],
+      "requires": [],
+      "conflicts": [],
+      "tuning_knobs": [
+        "capacity",
+        "overflow_rule"
+      ]
+    },
+    {
+      "id": "module.unlock_tree",
+      "name": "Unlock Tree",
+      "category": "progression",
+      "description": "通过目标或资源解锁新单位、建筑、配方、卡牌或区域。",
+      "runtime_components": [
+        "UnlockCondition",
+        "UnlockState"
+      ],
+      "default_entities": [],
+      "default_params": {
+        "unlock_nodes": 6
+      },
+      "inputs": [
+        "milestone",
+        "resource_state"
+      ],
+      "outputs": [
+        "new_content_unlocked"
+      ],
+      "works_with_loops": [
+        "core_loop.factory_expansion",
+        "core_loop.build_expand",
+        "core_loop.idle_incremental",
+        "core_loop.merge_synthesis"
+      ],
+      "requires": [],
+      "conflicts": [],
+      "tuning_knobs": [
+        "unlock_costs",
+        "node_count"
+      ]
+    },
+    {
+      "id": "module.automation",
+      "name": "Automation",
+      "category": "factory",
+      "description": "把原本需要手动执行的采集、生产、运输或点击操作自动化。",
+      "runtime_components": [
+        "AutoWorker",
+        "AutoTask"
+      ],
+      "default_entities": [],
+      "default_params": {
+        "automation_cost": 50,
+        "automation_efficiency": 0.75
+      },
+      "inputs": [
+        "manual_task"
+      ],
+      "outputs": [
+        "auto_task"
+      ],
+      "works_with_loops": [
+        "core_loop.factory_expansion",
+        "core_loop.idle_incremental"
+      ],
+      "requires": [],
+      "conflicts": [],
+      "tuning_knobs": [
+        "automation_cost",
+        "automation_efficiency"
+      ]
+    },
+    {
+      "id": "module.resource_system",
+      "name": "Resource System",
+      "category": "economy",
+      "description": "定义资源种类、数量、产出、消耗和上限。",
+      "runtime_components": [
+        "ResourceWallet",
+        "ResourceDefinition"
+      ],
+      "default_entities": [
+        {
+          "id": "resource_primary",
+          "type": "resource",
+          "shape": "counter"
+        }
+      ],
+      "default_params": {
+        "resources": [
+          "gold"
+        ],
+        "starting_amount": 0
+      },
+      "inputs": [
+        "resource_events"
+      ],
+      "outputs": [
+        "resource_state"
+      ],
+      "works_with_loops": [
+        "core_loop.build_expand",
+        "core_loop.idle_incremental",
+        "core_loop.factory_expansion"
+      ],
+      "requires": [],
+      "conflicts": [],
+      "tuning_knobs": [
+        "starting_amount",
+        "income_rate",
+        "resource_cap"
+      ]
+    },
+    {
+      "id": "module.building_grid",
+      "name": "Building Grid",
+      "category": "map",
+      "description": "提供可建造格子和建筑放置规则。",
+      "runtime_components": [
+        "BuildGrid",
+        "PlacementValidator"
+      ],
+      "default_entities": [
+        {
+          "id": "building_plot",
+          "type": "build_cell",
+          "shape": "square"
+        }
+      ],
+      "default_params": {
+        "width": 8,
+        "height": 8,
+        "starting_plots": 12
+      },
+      "inputs": [
+        "map_bounds"
+      ],
+      "outputs": [
+        "valid_build_locations"
+      ],
+      "works_with_loops": [
+        "core_loop.build_expand",
+        "core_loop.merge_synthesis"
+      ],
+      "requires": [],
+      "conflicts": [],
+      "tuning_knobs": [
+        "grid_width",
+        "grid_height",
+        "initial_unlock_area"
+      ]
+    },
+    {
+      "id": "module.production_tick",
+      "name": "Production Tick",
+      "category": "economy",
+      "description": "建筑或单位按固定时间间隔产出资源或效果。",
+      "runtime_components": [
+        "TickTimer",
+        "ProductionResolver"
+      ],
+      "default_entities": [],
+      "default_params": {
+        "tick_interval": 1.0,
+        "output_per_tick": 1
+      },
+      "inputs": [
+        "building_state"
+      ],
+      "outputs": [
+        "resource_delta"
+      ],
+      "works_with_loops": [
+        "core_loop.build_expand",
+        "core_loop.idle_incremental"
+      ],
+      "requires": [],
+      "conflicts": [],
+      "tuning_knobs": [
+        "tick_interval",
+        "output_per_tick"
+      ]
+    },
+    {
+      "id": "module.capacity_or_territory",
+      "name": "Capacity or Territory",
+      "category": "rule",
+      "description": "通过容量、人口、领地或建造格限制扩张速度。",
+      "runtime_components": [
+        "CapacityLimit",
+        "TerritoryUnlock"
+      ],
+      "default_entities": [],
+      "default_params": {
+        "starting_capacity": 5
+      },
+      "inputs": [
+        "build_request",
+        "unlock_state"
+      ],
+      "outputs": [
+        "can_expand"
+      ],
+      "works_with_loops": [
+        "core_loop.build_expand"
+      ],
+      "requires": [],
+      "conflicts": [],
+      "tuning_knobs": [
+        "starting_capacity",
+        "expansion_cost"
+      ]
+    },
+    {
+      "id": "module.puzzle_rule",
+      "name": "Puzzle Rule",
+      "category": "puzzle",
+      "description": "定义局面如何响应玩家操作以及什么状态算解决。",
+      "runtime_components": [
+        "PuzzleRule",
+        "StateEvaluator"
+      ],
+      "default_entities": [],
+      "default_params": {
+        "rule_type": "match_or_move",
+        "deterministic": true
+      },
+      "inputs": [
+        "player_action",
+        "puzzle_state"
+      ],
+      "outputs": [
+        "new_puzzle_state"
+      ],
+      "works_with_loops": [
+        "core_loop.puzzle_solve"
+      ],
+      "requires": [],
+      "conflicts": [],
+      "tuning_knobs": [
+        "complexity",
+        "solution_depth"
+      ]
+    },
+    {
+      "id": "module.player_action",
+      "name": "Player Action",
+      "category": "input",
+      "description": "定义玩家可执行的最小操作，如点击、拖拽、交换、旋转、推拉。",
+      "runtime_components": [
+        "InputMapper",
+        "ActionValidator"
+      ],
+      "default_entities": [],
+      "default_params": {
+        "actions": [
+          "click",
+          "drag"
+        ]
+      },
+      "inputs": [
+        "player_input"
+      ],
+      "outputs": [
+        "action_request"
+      ],
+      "works_with_loops": [
+        "core_loop.puzzle_solve",
+        "core_loop.deck_builder",
+        "core_loop.wave_defense"
+      ],
+      "requires": [],
+      "conflicts": [],
+      "tuning_knobs": [
+        "allowed_actions",
+        "action_cost"
+      ]
+    },
+    {
+      "id": "module.retry_system",
+      "name": "Retry System",
+      "category": "rule",
+      "description": "允许玩家重置关卡、撤销或快速再来一局。",
+      "runtime_components": [
+        "ResetState",
+        "UndoStack"
+      ],
+      "default_entities": [],
+      "default_params": {
+        "allow_retry": true,
+        "allow_undo": false
+      },
+      "inputs": [
+        "fail_event",
+        "player_request"
+      ],
+      "outputs": [
+        "reset_state"
+      ],
+      "works_with_loops": [
+        "core_loop.puzzle_solve",
+        "core_loop.runner_avoidance"
+      ],
+      "requires": [],
+      "conflicts": [],
+      "tuning_knobs": [
+        "undo_limit",
+        "retry_penalty"
+      ]
+    },
+    {
+      "id": "module.match_rule",
+      "name": "Match Rule",
+      "category": "puzzle",
+      "description": "相邻或成组对象满足条件时消除、合成或得分。",
+      "runtime_components": [
+        "Matcher",
+        "ClearResolver"
+      ],
+      "default_entities": [
+        {
+          "id": "gem",
+          "type": "puzzle_piece",
+          "shape": "circle"
+        }
+      ],
+      "default_params": {
+        "match_count": 3,
+        "gravity": true
+      },
+      "inputs": [
+        "board_state"
+      ],
+      "outputs": [
+        "matched_pieces",
+        "score_delta"
+      ],
+      "works_with_loops": [
+        "core_loop.puzzle_solve"
+      ],
+      "requires": [
+        "module.board_grid"
+      ],
+      "conflicts": [],
+      "tuning_knobs": [
+        "match_count",
+        "piece_types",
+        "gravity"
+      ]
+    },
+    {
+      "id": "module.chain_reaction",
+      "name": "Chain Reaction",
+      "category": "puzzle",
+      "description": "一次操作触发多个后续变化，制造连锁爽感。",
+      "runtime_components": [
+        "ReactionQueue",
+        "CascadeResolver"
+      ],
+      "default_entities": [],
+      "default_params": {
+        "max_chain_depth": 5,
+        "score_bonus_per_chain": 0.5
+      },
+      "inputs": [
+        "state_change"
+      ],
+      "outputs": [
+        "secondary_changes"
+      ],
+      "works_with_loops": [
+        "core_loop.puzzle_solve",
+        "core_loop.deck_builder"
+      ],
+      "requires": [],
+      "conflicts": [],
+      "tuning_knobs": [
+        "max_chain_depth",
+        "bonus_per_chain"
+      ]
+    },
+    {
+      "id": "module.step_limit",
+      "name": "Step Limit",
+      "category": "rule",
+      "description": "限制玩家可执行操作次数，制造策略压力。",
+      "runtime_components": [
+        "StepCounter"
+      ],
+      "default_entities": [],
+      "default_params": {
+        "step_limit": 20
+      },
+      "inputs": [
+        "player_action"
+      ],
+      "outputs": [
+        "steps_remaining"
+      ],
+      "works_with_loops": [
+        "core_loop.puzzle_solve"
+      ],
+      "requires": [],
+      "conflicts": [],
+      "tuning_knobs": [
+        "step_limit"
+      ]
+    },
+    {
+      "id": "module.auto_forward",
+      "name": "Auto Forward",
+      "category": "movement",
+      "description": "角色或镜头自动向前推进。",
+      "runtime_components": [
+        "AutoForwardMovement"
+      ],
+      "default_entities": [],
+      "default_params": {
+        "speed": 5,
+        "speed_curve": "linear"
+      },
+      "inputs": [
+        "timer"
+      ],
+      "outputs": [
+        "player_forward_position"
+      ],
+      "works_with_loops": [
+        "core_loop.runner_avoidance"
+      ],
+      "requires": [],
+      "conflicts": [],
+      "tuning_knobs": [
+        "speed",
+        "speed_curve"
+      ]
+    },
+    {
+      "id": "module.obstacle_spawner",
+      "name": "Obstacle Spawner",
+      "category": "hazard",
+      "description": "持续或按节奏生成障碍物。",
+      "runtime_components": [
+        "ObstacleSpawner",
+        "PatternSchedule"
+      ],
+      "default_entities": [
+        {
+          "id": "obstacle",
+          "type": "hazard",
+          "shape": "cube"
+        }
+      ],
+      "default_params": {
+        "spawn_interval": 1.0,
+        "pattern": "lane_random"
+      },
+      "inputs": [
+        "distance",
+        "difficulty"
+      ],
+      "outputs": [
+        "obstacle_instances"
+      ],
+      "works_with_loops": [
+        "core_loop.runner_avoidance"
+      ],
+      "requires": [],
+      "conflicts": [],
+      "tuning_knobs": [
+        "spawn_interval",
+        "pattern_complexity"
+      ]
+    },
+    {
+      "id": "module.dodge_action",
+      "name": "Dodge Action",
+      "category": "input",
+      "description": "玩家通过跳跃、左右移动、冲刺或下滑来规避危险。",
+      "runtime_components": [
+        "DodgeController"
+      ],
+      "default_entities": [],
+      "default_params": {
+        "actions": [
+          "left",
+          "right",
+          "jump"
+        ]
+      },
+      "inputs": [
+        "player_input",
+        "hazards"
+      ],
+      "outputs": [
+        "avoidance_result"
+      ],
+      "works_with_loops": [
+        "core_loop.runner_avoidance",
+        "core_loop.survival_growth"
+      ],
+      "requires": [],
+      "conflicts": [],
+      "tuning_knobs": [
+        "dodge_cooldown",
+        "lane_count"
+      ]
+    },
+    {
+      "id": "module.collectable_spawner",
+      "name": "Collectable Spawner",
+      "category": "reward",
+      "description": "生成金币、经验、道具或目标物，鼓励移动路线选择。",
+      "runtime_components": [
+        "CollectableSpawner",
+        "Pickup"
+      ],
+      "default_entities": [
+        {
+          "id": "coin",
+          "type": "collectable",
+          "shape": "small_circle"
+        }
+      ],
+      "default_params": {
+        "spawn_interval": 0.8,
+        "value": 1
+      },
+      "inputs": [
+        "map_progress"
+      ],
+      "outputs": [
+        "collectable_instances"
+      ],
+      "works_with_loops": [
+        "core_loop.runner_avoidance",
+        "core_loop.survival_growth"
+      ],
+      "requires": [],
+      "conflicts": [],
+      "tuning_knobs": [
+        "spawn_interval",
+        "value",
+        "placement_pattern"
+      ]
+    },
+    {
+      "id": "module.collision_failure",
+      "name": "Collision Failure",
+      "category": "rule",
+      "description": "碰撞障碍、敌人或危险区域后扣血或失败。",
+      "runtime_components": [
+        "CollisionChecker",
+        "DamageOnCollision"
+      ],
+      "default_entities": [],
+      "default_params": {
+        "collision_damage": 1,
+        "instant_fail": false
+      },
+      "inputs": [
+        "collision_event"
+      ],
+      "outputs": [
+        "hp_delta",
+        "fail_event"
+      ],
+      "works_with_loops": [
+        "core_loop.runner_avoidance"
+      ],
+      "requires": [],
+      "conflicts": [],
+      "tuning_knobs": [
+        "collision_damage",
+        "invincibility_time"
+      ]
+    },
+    {
+      "id": "module.item_spawn",
+      "name": "Item Spawn",
+      "category": "item",
+      "description": "按规则在棋盘、地图或 UI 中生成新物品。",
+      "runtime_components": [
+        "ItemSpawner",
+        "ItemDefinition"
+      ],
+      "default_entities": [
+        {
+          "id": "item_lv1",
+          "type": "merge_item",
+          "shape": "square",
+          "tier": 1
+        }
+      ],
+      "default_params": {
+        "spawn_cost": 1,
+        "spawn_pool": [
+          "item_lv1"
+        ]
+      },
+      "inputs": [
+        "spawn_request"
+      ],
+      "outputs": [
+        "item_instance"
+      ],
+      "works_with_loops": [
+        "core_loop.merge_synthesis"
+      ],
+      "requires": [],
+      "conflicts": [],
+      "tuning_knobs": [
+        "spawn_cost",
+        "spawn_pool",
+        "tier_chance"
+      ]
+    },
+    {
+      "id": "module.order_system",
+      "name": "Order System",
+      "category": "goal",
+      "description": "生成需求订单，玩家交付指定物品获得奖励。",
+      "runtime_components": [
+        "OrderGenerator",
+        "DeliveryChecker"
+      ],
+      "default_entities": [
+        {
+          "id": "order",
+          "type": "goal",
+          "shape": "rectangle"
+        }
+      ],
+      "default_params": {
+        "active_orders": 3,
+        "reward_type": "gold"
+      },
+      "inputs": [
+        "item_collection"
+      ],
+      "outputs": [
+        "order_reward"
+      ],
+      "works_with_loops": [
+        "core_loop.merge_synthesis"
+      ],
+      "requires": [],
+      "conflicts": [],
+      "tuning_knobs": [
+        "active_orders",
+        "order_difficulty_curve"
+      ]
+    },
+    {
+      "id": "module.collection_book",
+      "name": "Collection Book",
+      "category": "meta",
+      "description": "记录已解锁或已发现对象，形成收集目标。",
+      "runtime_components": [
+        "CollectionState",
+        "DiscoveryTrigger"
+      ],
+      "default_entities": [],
+      "default_params": {
+        "collection_size": 20
+      },
+      "inputs": [
+        "unlock_event"
+      ],
+      "outputs": [
+        "collection_progress"
+      ],
+      "works_with_loops": [
+        "core_loop.merge_synthesis",
+        "core_loop.idle_incremental",
+        "core_loop.survival_growth"
+      ],
+      "requires": [],
+      "conflicts": [],
+      "tuning_knobs": [
+        "collection_size",
+        "reward_per_entry"
+      ]
+    },
+    {
+      "id": "module.idle_income",
+      "name": "Idle Income",
+      "category": "economy",
+      "description": "资源按时间自动增长，玩家只需定期做升级决策。",
+      "runtime_components": [
+        "IncomeTimer",
+        "IncomeFormula"
+      ],
+      "default_entities": [
+        {
+          "id": "coin",
+          "type": "resource",
+          "shape": "counter"
+        }
+      ],
+      "default_params": {
+        "income_per_second": 1,
+        "offline_income": false
+      },
+      "inputs": [
+        "time_tick",
+        "upgrade_state"
+      ],
+      "outputs": [
+        "resource_delta"
+      ],
+      "works_with_loops": [
+        "core_loop.idle_incremental"
+      ],
+      "requires": [],
+      "conflicts": [],
+      "tuning_knobs": [
+        "income_per_second",
+        "offline_income_rate"
+      ]
+    },
+    {
+      "id": "module.milestone_reward",
+      "name": "Milestone Reward",
+      "category": "progression",
+      "description": "达到资源、分数、波次或解锁数量阈值后给予奖励。",
+      "runtime_components": [
+        "MilestoneChecker",
+        "MilestoneReward"
+      ],
+      "default_entities": [],
+      "default_params": {
+        "milestones": [
+          100,
+          500,
+          2000
+        ],
+        "reward_type": "unlock"
+      },
+      "inputs": [
+        "progress_value"
+      ],
+      "outputs": [
+        "milestone_event"
+      ],
+      "works_with_loops": [
+        "core_loop.idle_incremental",
+        "core_loop.build_expand"
+      ],
+      "requires": [],
+      "conflicts": [],
+      "tuning_knobs": [
+        "milestone_values",
+        "reward_strength"
+      ]
+    },
+    {
+      "id": "module.prestige_system",
+      "name": "Prestige System",
+      "category": "meta",
+      "description": "重置当前进度换取永久加成，用于长线放置或增量游戏。",
+      "runtime_components": [
+        "PrestigeCalculator",
+        "PermanentModifier"
+      ],
+      "default_entities": [],
+      "default_params": {
+        "prestige_threshold": 10000,
+        "bonus_per_prestige": 0.1
+      },
+      "inputs": [
+        "progress_value"
+      ],
+      "outputs": [
+        "permanent_bonus"
+      ],
+      "works_with_loops": [
+        "core_loop.idle_incremental"
+      ],
+      "requires": [
+        "module.milestone_reward"
+      ],
+      "conflicts": [],
+      "tuning_knobs": [
+        "threshold",
+        "bonus_rate"
+      ]
+    },
+    {
+      "id": "module.quest_system",
+      "name": "Quest System",
+      "category": "goal",
+      "description": "提供短期任务目标，引导玩家尝试系统。",
+      "runtime_components": [
+        "QuestDefinition",
+        "QuestTracker"
+      ],
+      "default_entities": [
+        {
+          "id": "quest",
+          "type": "goal",
+          "shape": "rectangle"
+        }
+      ],
+      "default_params": {
+        "active_quests": 3
+      },
+      "inputs": [
+        "game_events"
+      ],
+      "outputs": [
+        "quest_reward"
+      ],
+      "works_with_loops": [
+        "core_loop.idle_incremental",
+        "core_loop.build_expand",
+        "core_loop.narrative_choice"
+      ],
+      "requires": [],
+      "conflicts": [],
+      "tuning_knobs": [
+        "active_quests",
+        "quest_reward"
+      ]
+    },
+    {
+      "id": "module.event_bonus",
+      "name": "Event Bonus",
+      "category": "event",
+      "description": "临时事件提高收益、改变规则或提供限定目标。",
+      "runtime_components": [
+        "TimedEvent",
+        "EventModifier"
+      ],
+      "default_entities": [],
+      "default_params": {
+        "duration": 60,
+        "bonus_multiplier": 2
+      },
+      "inputs": [
+        "timer",
+        "event_schedule"
+      ],
+      "outputs": [
+        "temporary_modifier"
+      ],
+      "works_with_loops": [
+        "core_loop.idle_incremental",
+        "core_loop.build_expand",
+        "core_loop.wave_defense"
+      ],
+      "requires": [],
+      "conflicts": [],
+      "tuning_knobs": [
+        "duration",
+        "bonus_multiplier",
+        "event_frequency"
+      ]
+    },
+    {
+      "id": "module.narrative_choice",
+      "name": "Narrative Choice",
+      "category": "narrative",
+      "description": "玩家在事件、剧情或遭遇中选择分支，改变状态。",
+      "runtime_components": [
+        "ChoiceNode",
+        "ConsequenceResolver"
+      ],
+      "default_entities": [
+        {
+          "id": "choice",
+          "type": "choice",
+          "shape": "button"
+        }
+      ],
+      "default_params": {
+        "choice_count": 2,
+        "state_variables": [
+          "morale",
+          "gold"
+        ]
+      },
+      "inputs": [
+        "scene_state"
+      ],
+      "outputs": [
+        "state_delta",
+        "next_scene"
+      ],
+      "works_with_loops": [
+        "core_loop.narrative_choice"
+      ],
+      "requires": [],
+      "conflicts": [],
+      "tuning_knobs": [
+        "choice_count",
+        "consequence_strength"
+      ]
+    },
+    {
+      "id": "module.disaster_event",
+      "name": "Disaster Event",
+      "category": "event",
+      "description": "随机或定时灾害事件，打断稳定经营并制造短期应对压力。",
+      "runtime_components": [
+        "DisasterEvent"
+      ],
+      "default_entities": [],
+      "default_params": {},
+      "inputs": [
+        "game_state"
+      ],
+      "outputs": [
+        "state_delta"
+      ],
+      "works_with_loops": [],
+      "requires": [],
+      "conflicts": [],
+      "tuning_knobs": [
+        "frequency",
+        "strength"
+      ]
+    },
+    {
+      "id": "module.enemy_attack",
+      "name": "Enemy Attack",
+      "category": "combat",
+      "description": "敌人主动攻击玩家设施、基地、生产线或单位。",
+      "runtime_components": [
+        "EnemyAttack"
+      ],
+      "default_entities": [],
+      "default_params": {},
+      "inputs": [
+        "game_state"
+      ],
+      "outputs": [
+        "state_delta"
+      ],
+      "works_with_loops": [],
+      "requires": [],
+      "conflicts": [],
+      "tuning_knobs": [
+        "frequency",
+        "strength"
+      ]
+    },
+    {
+      "id": "module.happiness_system",
+      "name": "Happiness System",
+      "category": "management",
+      "description": "通过满意度、士气或稳定度限制经营扩张。",
+      "runtime_components": [
+        "HappinessSystem"
+      ],
+      "default_entities": [],
+      "default_params": {},
+      "inputs": [
+        "game_state"
+      ],
+      "outputs": [
+        "state_delta"
+      ],
+      "works_with_loops": [],
+      "requires": [],
+      "conflicts": [],
+      "tuning_knobs": [
+        "frequency",
+        "strength"
+      ]
+    },
+    {
+      "id": "module.lane_switch",
+      "name": "Lane Switch",
+      "category": "movement",
+      "description": "玩家在固定车道之间切换位置。",
+      "runtime_components": [
+        "LaneSwitch"
+      ],
+      "default_entities": [],
+      "default_params": {},
+      "inputs": [
+        "game_state"
+      ],
+      "outputs": [
+        "state_delta"
+      ],
+      "works_with_loops": [],
+      "requires": [],
+      "conflicts": [],
+      "tuning_knobs": [
+        "frequency",
+        "strength"
+      ]
+    },
+    {
+      "id": "module.market_system",
+      "name": "Market System",
+      "category": "economy",
+      "description": "资源或物品可以按价格买卖，价格可固定或波动。",
+      "runtime_components": [
+        "MarketSystem"
+      ],
+      "default_entities": [],
+      "default_params": {},
+      "inputs": [
+        "game_state"
+      ],
+      "outputs": [
+        "state_delta"
+      ],
+      "works_with_loops": [],
+      "requires": [],
+      "conflicts": [],
+      "tuning_knobs": [
+        "frequency",
+        "strength"
+      ]
+    },
+    {
+      "id": "module.power_up",
+      "name": "Power Up",
+      "category": "reward",
+      "description": "短时强化道具，如无敌、加速、吸附、双倍收益。",
+      "runtime_components": [
+        "PowerUp"
+      ],
+      "default_entities": [],
+      "default_params": {},
+      "inputs": [
+        "game_state"
+      ],
+      "outputs": [
+        "state_delta"
+      ],
+      "works_with_loops": [],
+      "requires": [],
+      "conflicts": [],
+      "tuning_knobs": [
+        "frequency",
+        "strength"
+      ]
+    },
+    {
+      "id": "module.random_reward",
+      "name": "Random Reward",
+      "category": "reward",
+      "description": "随机奖励池，按稀有度或权重产出奖励。",
+      "runtime_components": [
+        "RandomReward"
+      ],
+      "default_entities": [],
+      "default_params": {},
+      "inputs": [
+        "game_state"
+      ],
+      "outputs": [
+        "state_delta"
+      ],
+      "works_with_loops": [],
+      "requires": [],
+      "conflicts": [],
+      "tuning_knobs": [
+        "frequency",
+        "strength"
+      ]
+    },
+    {
+      "id": "module.rhythm_timing",
+      "name": "Rhythm Timing",
+      "category": "input",
+      "description": "操作与节奏点相关，命中时机越准收益越高。",
+      "runtime_components": [
+        "RhythmTiming"
+      ],
+      "default_entities": [],
+      "default_params": {},
+      "inputs": [
+        "game_state"
+      ],
+      "outputs": [
+        "state_delta"
+      ],
+      "works_with_loops": [],
+      "requires": [],
+      "conflicts": [],
+      "tuning_knobs": [
+        "frequency",
+        "strength"
+      ]
+    },
+    {
+      "id": "module.switch_trigger",
+      "name": "Switch Trigger",
+      "category": "puzzle",
+      "description": "开关、机关或触发器改变局面状态。",
+      "runtime_components": [
+        "SwitchTrigger"
+      ],
+      "default_entities": [],
+      "default_params": {},
+      "inputs": [
+        "game_state"
+      ],
+      "outputs": [
+        "state_delta"
+      ],
+      "works_with_loops": [],
+      "requires": [],
+      "conflicts": [],
+      "tuning_knobs": [
+        "frequency",
+        "strength"
+      ]
+    },
+    {
+      "id": "module.tech_tree",
+      "name": "Tech Tree",
+      "category": "progression",
+      "description": "科技树式解锁，扩展玩法模块和数值能力。",
+      "runtime_components": [
+        "TechTree"
+      ],
+      "default_entities": [],
+      "default_params": {},
+      "inputs": [
+        "game_state"
+      ],
+      "outputs": [
+        "state_delta"
+      ],
+      "works_with_loops": [],
+      "requires": [],
+      "conflicts": [],
+      "tuning_knobs": [
+        "frequency",
+        "strength"
+      ]
+    },
+    {
+      "id": "module.vehicle_control",
+      "name": "Vehicle Control",
+      "category": "movement",
+      "description": "载具转向、加速、刹车或漂移控制。",
+      "runtime_components": [
+        "VehicleControl"
+      ],
+      "default_entities": [],
+      "default_params": {},
+      "inputs": [
+        "game_state"
+      ],
+      "outputs": [
+        "state_delta"
+      ],
+      "works_with_loops": [],
+      "requires": [],
+      "conflicts": [],
+      "tuning_knobs": [
+        "frequency",
+        "strength"
+      ]
+    },
+    {
+      "id": "module.worker_system",
+      "name": "Worker System",
+      "category": "management",
+      "description": "工人执行采集、建造、运输或生产任务。",
+      "runtime_components": [
+        "WorkerSystem"
+      ],
+      "default_entities": [],
+      "default_params": {},
+      "inputs": [
+        "game_state"
+      ],
+      "outputs": [
+        "state_delta"
+      ],
+      "works_with_loops": [],
+      "requires": [],
+      "conflicts": [],
+      "tuning_knobs": [
+        "frequency",
+        "strength"
+      ]
+    }
+  ],
+  "fusion_rules": [
+    {
+      "id": "fusion.tower_defense_plus_deckbuilder",
+      "name": "Tower Defense + Deck Builder",
+      "primary_loop": "core_loop.wave_defense",
+      "secondary_loop": "core_loop.deck_builder",
+      "intent": "保留塔防的波次压力，把卡牌作为每波前或每波中的策略修改器。",
+      "result_loop_steps": [
+        "prepare",
+        "draw_or_choose_cards",
+        "build_or_modify_towers",
+        "enemy_wave",
+        "play_tactical_cards",
+        "reward",
+        "card_or_shop_reward",
+        "upgrade",
+        "next_wave"
+      ],
+      "add_modules": [
+        "module.card_system",
+        "module.deck_hand",
+        "module.card_effect",
+        "module.shop_system",
+        "module.relic_system",
+        "module.score_multiplier"
+      ],
+      "remove_or_limit_modules": [],
+      "transformation_rules": [
+        "卡牌不要替代塔防核心；卡牌只改变塔、敌人、金币、路径或技能。",
+        "每波前默认抽 3 张策略卡，玩家选择 1 张立即生效，避免初版 UI 过重。",
+        "第一版不做复杂牌库循环；使用轻量牌池即可可玩。"
+      ],
+      "skeleton_changes": [
+        "增加卡牌栏",
+        "每波前出现 3 选 1 策略卡",
+        "卡牌效果可影响塔伤害、金币倍率、敌人速度或本波奖励"
+      ],
+      "default_params": {
+        "pre_wave_card_choices": 3,
+        "cards_persist": "this_wave_or_permanent_relic",
+        "deck_complexity": "light"
+      },
+      "example_prompt": "三国塔防 + Balatro"
+    },
+    {
+      "id": "fusion.tower_defense_plus_survival",
+      "name": "Tower Defense + Survival Growth",
+      "primary_loop": "core_loop.wave_defense",
+      "secondary_loop": "core_loop.survival_growth",
+      "intent": "保留防守目标与波次，同时加入可移动英雄、经验掉落和肉鸽升级。",
+      "result_loop_steps": [
+        "prepare",
+        "enemy_wave",
+        "hero_move_and_auto_attack",
+        "defend_base",
+        "collect_exp",
+        "choose_upgrade",
+        "reward",
+        "next_wave"
+      ],
+      "add_modules": [
+        "module.hero_control",
+        "module.player_movement",
+        "module.auto_attack",
+        "module.exp_drop",
+        "module.random_upgrade_choice",
+        "module.weapon_evolution"
+      ],
+      "remove_or_limit_modules": [],
+      "transformation_rules": [
+        "英雄是战场补位和 Build 载体，不应取代所有防御塔。",
+        "经验来源优先由敌人掉落，升级三选一作用于英雄或全局防御。",
+        "第一版地图保持单路径或双路径，避免英雄移动与路径规划过复杂。"
+      ],
+      "skeleton_changes": [
+        "增加可移动英雄",
+        "敌人掉落经验点",
+        "升级时三选一",
+        "英雄自动攻击附近敌人"
+      ],
+      "default_params": {
+        "hero_enabled": true,
+        "upgrade_choices": 3,
+        "exp_drop_rate": 1.0
+      },
+      "example_prompt": "塔防 + 吸血鬼幸存者"
+    },
+    {
+      "id": "fusion.deckbuilder_plus_tactics",
+      "name": "Deck Builder + Tactical Turn",
+      "primary_loop": "core_loop.tactical_turn",
+      "secondary_loop": "core_loop.deck_builder",
+      "intent": "让卡牌成为战棋单位的行动来源，减少传统技能菜单，增强每回合决策变化。",
+      "result_loop_steps": [
+        "draw",
+        "inspect_grid",
+        "play_card_as_action",
+        "move_or_attack",
+        "resolve",
+        "enemy_turn",
+        "discard",
+        "next_round"
+      ],
+      "add_modules": [
+        "module.card_system",
+        "module.deck_hand",
+        "module.card_effect",
+        "module.energy_system",
+        "module.enemy_intent"
+      ],
+      "remove_or_limit_modules": [
+        "module.action_point"
+      ],
+      "transformation_rules": [
+        "卡牌直接代表移动、攻击、防御、推拉或技能。",
+        "行动点可用能量替代；初版建议每回合 3 点能量。",
+        "敌人意图必须展示，否则玩家无法做策略规划。"
+      ],
+      "skeleton_changes": [
+        "单位行动由卡牌驱动",
+        "每回合抽牌",
+        "卡牌目标为棋盘单位或格子",
+        "敌人显示下一步意图"
+      ],
+      "default_params": {
+        "energy_per_turn": 3,
+        "hand_size": 5,
+        "grid_size": [
+          6,
+          6
+        ]
+      },
+      "example_prompt": "卡牌战棋"
+    },
+    {
+      "id": "fusion.factory_plus_tower_defense",
+      "name": "Factory + Tower Defense",
+      "primary_loop": "core_loop.factory_expansion",
+      "secondary_loop": "core_loop.wave_defense",
+      "intent": "用生产线产出防御资源，让敌人攻击生产系统，形成产能与防守的取舍。",
+      "result_loop_steps": [
+        "collect_resource",
+        "build_factory",
+        "produce_defense_resource",
+        "enemy_wave",
+        "defend_factory",
+        "repair_or_upgrade",
+        "expand"
+      ],
+      "add_modules": [
+        "module.enemy_spawn",
+        "module.path_or_lane",
+        "module.defense_action",
+        "module.tower_building",
+        "module.tower_attack",
+        "module.base_hp",
+        "module.enemy_attack"
+      ],
+      "remove_or_limit_modules": [],
+      "transformation_rules": [
+        "塔不直接用金币购买，而由工厂产出的材料建造或升级。",
+        "敌人的目标优先攻击关键生产节点或基地。",
+        "初版只做 2 级生产链：资源点 -> 机器 -> 防御材料。"
+      ],
+      "skeleton_changes": [
+        "敌人攻击工厂",
+        "生产线产出建塔资源",
+        "玩家在扩产和防御之间取舍"
+      ],
+      "default_params": {
+        "production_chain_depth": 2,
+        "enemy_wave_interval": 45,
+        "repair_enabled": true
+      },
+      "example_prompt": "工厂自动化 + 塔防"
+    },
+    {
+      "id": "fusion.auto_battler_plus_deckbuilder",
+      "name": "Auto Battler + Deck Builder",
+      "primary_loop": "core_loop.auto_battler",
+      "secondary_loop": "core_loop.deck_builder",
+      "intent": "用卡牌或牌组影响自动战斗阵容，形成赛前构筑与战斗验证。",
+      "result_loop_steps": [
+        "shop",
+        "draw_or_choose_cards",
+        "buy_or_modify_units",
+        "position_units",
+        "auto_fight",
+        "reward",
+        "modify_deck_or_team"
+      ],
+      "add_modules": [
+        "module.card_system",
+        "module.deck_hand",
+        "module.card_effect",
+        "module.relic_system",
+        "module.faction_synergy"
+      ],
+      "remove_or_limit_modules": [],
+      "transformation_rules": [
+        "卡牌可以召唤单位、强化单位、改变站位规则或触发战斗开始效果。",
+        "保留自动战斗，不要让玩家战斗中频繁操作。",
+        "第一版可不做完整牌库，仅做战前卡牌选择。"
+      ],
+      "skeleton_changes": [
+        "商店阶段增加卡牌选择",
+        "卡牌影响阵容或本轮战斗",
+        "战斗仍自动结算"
+      ],
+      "default_params": {
+        "pre_fight_card_choices": 3,
+        "cards_affect": [
+          "unit_stats",
+          "summon",
+          "team_synergy"
+        ]
+      },
+      "example_prompt": "自走棋 + 卡牌"
+    },
+    {
+      "id": "fusion.puzzle_plus_roguelite",
+      "name": "Puzzle + Roguelite Modifier",
+      "primary_loop": "core_loop.puzzle_solve",
+      "secondary_loop": "core_loop.deck_builder",
+      "intent": "每局解谜规则稳定，但通过随机能力、卡牌或遗物改变解法空间。",
+      "result_loop_steps": [
+        "observe",
+        "draw_or_choose_modifier",
+        "choose_action",
+        "trigger_change",
+        "score_or_solve",
+        "reward_modifier",
+        "next_puzzle"
+      ],
+      "add_modules": [
+        "module.card_system",
+        "module.card_effect",
+        "module.relic_system",
+        "module.random_upgrade_choice",
+        "module.score_multiplier"
+      ],
+      "remove_or_limit_modules": [],
+      "transformation_rules": [
+        "随机能力只改变局部规则，不能让谜题目标完全失效。",
+        "每关后奖励一个修改器，建立长期 Build。",
+        "初版建议使用分数目标而不是唯一解谜目标。"
+      ],
+      "skeleton_changes": [
+        "解谜之间出现随机奖励",
+        "奖励修改棋子、步数、分数或连锁规则",
+        "支持多局连续成长"
+      ],
+      "default_params": {
+        "modifier_choices": 3,
+        "puzzle_goal": "score_or_clear"
+      },
+      "example_prompt": "三消 + 肉鸽"
+    },
+    {
+      "id": "fusion.runner_plus_roguelite",
+      "name": "Runner + Roguelite Upgrade",
+      "primary_loop": "core_loop.runner_avoidance",
+      "secondary_loop": "core_loop.survival_growth",
+      "intent": "跑酷过程中收集经验或道具，阶段性选择能力，增强重复游玩和 Build。",
+      "result_loop_steps": [
+        "auto_move",
+        "obstacle_spawn",
+        "dodge_or_jump",
+        "collect_exp_or_power",
+        "choose_upgrade",
+        "speed_up",
+        "finish_or_fail"
+      ],
+      "add_modules": [
+        "module.random_upgrade_choice",
+        "module.exp_drop",
+        "module.power_up",
+        "module.collectable_spawner"
+      ],
+      "remove_or_limit_modules": [],
+      "transformation_rules": [
+        "升级必须不破坏跑酷核心反应；优先影响容错、收益、磁吸或短时攻击。",
+        "每次升级暂停游戏或进入慢动作，保证选择清晰。",
+        "初版设置短局 90 秒，便于验证。"
+      ],
+      "skeleton_changes": [
+        "收集经验",
+        "进度中三选一升级",
+        "升级影响速度、磁吸、护盾或分数倍率"
+      ],
+      "default_params": {
+        "level_up_pause": true,
+        "run_duration": 90
+      },
+      "example_prompt": "跑酷 + 肉鸽"
+    },
+    {
+      "id": "fusion.build_expand_plus_wave_defense",
+      "name": "Build Expand + Wave Defense",
+      "primary_loop": "core_loop.build_expand",
+      "secondary_loop": "core_loop.wave_defense",
+      "intent": "在基地建设循环中加入周期性敌袭，让扩张需要防守规划。",
+      "result_loop_steps": [
+        "collect",
+        "build",
+        "produce",
+        "enemy_warning",
+        "defend_base",
+        "repair",
+        "upgrade",
+        "expand"
+      ],
+      "add_modules": [
+        "module.enemy_spawn",
+        "module.defense_action",
+        "module.tower_building",
+        "module.tower_attack",
+        "module.base_hp",
+        "module.boss_wave"
+      ],
+      "remove_or_limit_modules": [],
+      "transformation_rules": [
+        "敌袭应以周期性事件出现，不应持续打断建造。",
+        "防守失败可以损失建筑或资源，而不是立即全局失败。",
+        "初版保留单资源，降低经营复杂度。"
+      ],
+      "skeleton_changes": [
+        "建设基地",
+        "周期性敌袭",
+        "建筑可受损",
+        "玩家建造防御设施"
+      ],
+      "default_params": {
+        "raid_interval": 60,
+        "building_damage_enabled": true
+      },
+      "example_prompt": "基地建设 + 塔防"
+    },
+    {
+      "id": "fusion.survival_plus_deckbuilder",
+      "name": "Survival Growth + Deck Builder",
+      "primary_loop": "core_loop.survival_growth",
+      "secondary_loop": "core_loop.deck_builder",
+      "intent": "把卡牌作为升级或主动技能池，让生存割草的 Build 更可控。",
+      "result_loop_steps": [
+        "move",
+        "enemy_pressure",
+        "auto_attack",
+        "collect_exp",
+        "draw_upgrade_cards",
+        "choose_card_upgrade",
+        "survive_longer"
+      ],
+      "add_modules": [
+        "module.card_system",
+        "module.card_effect",
+        "module.deck_hand",
+        "module.random_upgrade_choice",
+        "module.relic_system"
+      ],
+      "remove_or_limit_modules": [],
+      "transformation_rules": [
+        "卡牌优先作为升级选项，不要要求玩家在高压移动中频繁出牌。",
+        "每次升级抽 3 张卡，选择后加入技能或被动。",
+        "主动卡可以设置自动触发或冷却触发。"
+      ],
+      "skeleton_changes": [
+        "升级选项变成卡牌",
+        "卡牌给武器、被动或触发技能",
+        "保留移动和自动攻击"
+      ],
+      "default_params": {
+        "upgrade_cards_per_level": 3,
+        "manual_card_play": false
+      },
+      "example_prompt": "吸血鬼幸存者 + 卡牌"
+    },
+    {
+      "id": "fusion.merge_plus_auto_battler",
+      "name": "Merge + Auto Battler",
+      "primary_loop": "core_loop.auto_battler",
+      "secondary_loop": "core_loop.merge_synthesis",
+      "intent": "通过合成提升单位星级或品质，再进入自动战斗验证阵容。",
+      "result_loop_steps": [
+        "shop_or_spawn_units",
+        "merge_same_units",
+        "position_units",
+        "auto_fight",
+        "reward",
+        "unlock_more_units"
+      ],
+      "add_modules": [
+        "module.merge_units",
+        "module.item_spawn",
+        "module.board_grid",
+        "module.faction_synergy"
+      ],
+      "remove_or_limit_modules": [],
+      "transformation_rules": [
+        "合成对象就是战斗单位，避免分离两套系统。",
+        "合成提升星级和基础属性。",
+        "棋盘既是合成空间，也可以复用为战斗站位空间。"
+      ],
+      "skeleton_changes": [
+        "单位可以合成升星",
+        "合成后进入自动战斗",
+        "奖励解锁更高品质单位"
+      ],
+      "default_params": {
+        "merge_count": 2,
+        "max_star": 3
+      },
+      "example_prompt": "合成 + 自走棋"
+    },
+    {
+      "id": "fusion.idle_plus_factory",
+      "name": "Idle + Factory",
+      "primary_loop": "core_loop.idle_incremental",
+      "secondary_loop": "core_loop.factory_expansion",
+      "intent": "保留放置低操作门槛，用工厂产线作为可视化增长结构。",
+      "result_loop_steps": [
+        "auto_income",
+        "buy_machine",
+        "connect_production",
+        "increase_income",
+        "unlock_milestone",
+        "expand_factory"
+      ],
+      "add_modules": [
+        "module.production_unit",
+        "module.transport_link",
+        "module.storage_system",
+        "module.automation",
+        "module.milestone_reward"
+      ],
+      "remove_or_limit_modules": [],
+      "transformation_rules": [
+        "产线可以抽象成节点连接，不需要完整物理运输。",
+        "自动收益是主体验，工厂是增长结构的可视化。",
+        "初版使用三种建筑：采集器、加工器、仓库。"
+      ],
+      "skeleton_changes": [
+        "放置收入通过工厂节点表现",
+        "购买机器提高收入",
+        "里程碑解锁新机器"
+      ],
+      "default_params": {
+        "machine_types": 3,
+        "offline_income": false
+      },
+      "example_prompt": "放置 + 工厂"
+    }
+  ],
+  "blueprints": [
+    {
+      "id": "blueprint.kingdom_rush_like",
+      "reference_title": "Kingdom Rush-like",
+      "safe_reuse_notice": "只抽象公开可观察的玩法结构，不复制关卡、角色、数值、美术或专有内容。",
+      "primary_loop": "core_loop.wave_defense",
+      "experience_intent": [
+        "策略准备",
+        "波次压力",
+        "塔位规划",
+        "升级反馈"
+      ],
+      "core_modules": [
+        "module.enemy_spawn",
+        "module.path_or_lane",
+        "module.tower_building",
+        "module.tower_attack",
+        "module.reward_system",
+        "module.upgrade_system",
+        "module.base_hp"
+      ],
+      "optional_modules": [
+        "module.hero_control",
+        "module.boss_wave",
+        "module.skill_cooldown"
+      ],
+      "minimal_skeleton_recipe": [
+        "生成一条从入口到基地的路径",
+        "放置 4-8 个建造点",
+        "敌人按 5-10 波生成",
+        "击杀给金币，金币建塔或升级塔",
+        "敌人到达基地扣血，基地血量为 0 失败"
+      ],
+      "fusion_hooks": [
+        "fusion.tower_defense_plus_deckbuilder",
+        "fusion.tower_defense_plus_survival",
+        "fusion.build_expand_plus_wave_defense"
+      ],
+      "default_tuning": {
+        "waves": 8,
+        "base_hp": 20,
+        "build_points": 6,
+        "starting_gold": 30
+      }
+    },
+    {
+      "id": "blueprint.plants_vs_zombies_like",
+      "reference_title": "Plants vs Zombies-like",
+      "safe_reuse_notice": "只抽象车道防守、阳光经济和冷却放置结构，不复制具体植物、僵尸、美术或关卡。",
+      "primary_loop": "core_loop.wave_defense",
+      "experience_intent": [
+        "横向车道压力",
+        "资源积累",
+        "阵线构建",
+        "逐渐失控"
+      ],
+      "core_modules": [
+        "module.enemy_spawn",
+        "module.path_or_lane",
+        "module.defense_action",
+        "module.reward_system",
+        "module.upgrade_system",
+        "module.base_hp"
+      ],
+      "optional_modules": [
+        "module.tower_building",
+        "module.skill_cooldown",
+        "module.boss_wave"
+      ],
+      "minimal_skeleton_recipe": [
+        "地图是 5 条横向车道",
+        "防御单位只能放在格子中",
+        "资源周期性生成，也可由特定单位生成",
+        "敌人沿车道前进",
+        "防御单位自动攻击同车道敌人"
+      ],
+      "fusion_hooks": [
+        "fusion.tower_defense_plus_deckbuilder",
+        "fusion.tower_defense_plus_survival"
+      ],
+      "default_tuning": {
+        "lanes": 5,
+        "waves": 6,
+        "starting_resource": 50,
+        "unit_cooldown": 5
+      }
+    },
+    {
+      "id": "blueprint.vampire_survivors_like",
+      "reference_title": "Vampire Survivors-like",
+      "safe_reuse_notice": "只抽象移动、自动攻击、经验掉落和升级三选一结构，不复制具体武器、角色或数值。",
+      "primary_loop": "core_loop.survival_growth",
+      "experience_intent": [
+        "割草爽感",
+        "敌群包围",
+        "短周期升级",
+        "Build 进化"
+      ],
+      "core_modules": [
+        "module.player_movement",
+        "module.enemy_spawn",
+        "module.auto_attack",
+        "module.attack_system",
+        "module.exp_drop",
+        "module.random_upgrade_choice",
+        "module.failure_condition"
+      ],
+      "optional_modules": [
+        "module.weapon_evolution",
+        "module.boss_wave",
+        "module.chest_reward",
+        "module.relic_system"
+      ],
+      "minimal_skeleton_recipe": [
+        "玩家在开放竞技场移动",
+        "敌人从边缘持续生成并追击玩家",
+        "玩家武器自动攻击最近敌人",
+        "敌人死亡掉落经验",
+        "经验满时三选一升级"
+      ],
+      "fusion_hooks": [
+        "fusion.tower_defense_plus_survival",
+        "fusion.survival_plus_deckbuilder",
+        "fusion.runner_plus_roguelite"
+      ],
+      "default_tuning": {
+        "duration_seconds": 300,
+        "start_enemy_interval": 1.2,
+        "upgrade_choices": 3
+      }
+    },
+    {
+      "id": "blueprint.balatro_like",
+      "reference_title": "Balatro-like",
+      "safe_reuse_notice": "只抽象牌型、倍率、商店构筑和爆分体验，不复制具体卡牌、美术、名称或牌面设计。",
+      "primary_loop": "core_loop.deck_builder",
+      "experience_intent": [
+        "风险计算",
+        "组合爆分",
+        "商店构筑",
+        "倍率成长"
+      ],
+      "core_modules": [
+        "module.card_system",
+        "module.deck_hand",
+        "module.card_effect",
+        "module.score_multiplier",
+        "module.shop_system",
+        "module.reward_system",
+        "module.relic_system"
+      ],
+      "optional_modules": [
+        "module.energy_system",
+        "module.progression_choice"
+      ],
+      "minimal_skeleton_recipe": [
+        "每回合抽一组牌",
+        "玩家选择若干牌提交",
+        "根据组合计算基础分与倍率",
+        "达成目标分进入下一局",
+        "局间商店购买被动修改器或改牌"
+      ],
+      "fusion_hooks": [
+        "fusion.tower_defense_plus_deckbuilder",
+        "fusion.survival_plus_deckbuilder",
+        "fusion.auto_battler_plus_deckbuilder",
+        "fusion.puzzle_plus_roguelite"
+      ],
+      "default_tuning": {
+        "hand_size": 8,
+        "play_count": 5,
+        "score_target": 300,
+        "shop_slots": 3
+      }
+    },
+    {
+      "id": "blueprint.slay_the_spire_like",
+      "reference_title": "Slay the Spire-like",
+      "safe_reuse_notice": "只抽象回合卡牌战斗、能量、敌人意图和路线奖励结构，不复制卡牌、遗物、敌人或事件。",
+      "primary_loop": "core_loop.deck_builder",
+      "experience_intent": [
+        "手牌决策",
+        "敌人意图应对",
+        "风险路线",
+        "长期牌组构筑"
+      ],
+      "core_modules": [
+        "module.card_system",
+        "module.deck_hand",
+        "module.card_effect",
+        "module.energy_system",
+        "module.enemy_intent",
+        "module.reward_system",
+        "module.progression_choice"
+      ],
+      "optional_modules": [
+        "module.relic_system",
+        "module.shop_system",
+        "module.boss_wave"
+      ],
+      "minimal_skeleton_recipe": [
+        "每回合抽牌并获得能量",
+        "玩家打出攻击、防御或技能卡",
+        "敌人显示下回合意图",
+        "战斗胜利后选择新卡或奖励",
+        "连续战斗形成牌组成长"
+      ],
+      "fusion_hooks": [
+        "fusion.deckbuilder_plus_tactics",
+        "fusion.survival_plus_deckbuilder",
+        "fusion.auto_battler_plus_deckbuilder"
+      ],
+      "default_tuning": {
+        "energy_per_turn": 3,
+        "hand_size": 5,
+        "starting_deck_size": 10
+      }
+    },
+    {
+      "id": "blueprint.auto_chess_like",
+      "reference_title": "Auto Chess-like",
+      "safe_reuse_notice": "只抽象商店、买单位、站位、自动战斗、羁绊和升星结构，不复制单位或美术内容。",
+      "primary_loop": "core_loop.auto_battler",
+      "experience_intent": [
+        "阵容构筑",
+        "随机商店",
+        "站位博弈",
+        "自动验证"
+      ],
+      "core_modules": [
+        "module.shop_system",
+        "module.unit_pool",
+        "module.board_grid",
+        "module.auto_combat",
+        "module.economy_system",
+        "module.round_progression"
+      ],
+      "optional_modules": [
+        "module.merge_units",
+        "module.faction_synergy",
+        "module.equipment_system",
+        "module.boss_wave"
+      ],
+      "minimal_skeleton_recipe": [
+        "商店刷新多个单位",
+        "玩家花费金币购买单位",
+        "单位放到棋盘格子上",
+        "战斗阶段自动寻敌攻击",
+        "胜负影响血量和金币，单位可合成升星"
+      ],
+      "fusion_hooks": [
+        "fusion.auto_battler_plus_deckbuilder",
+        "fusion.merge_plus_auto_battler"
+      ],
+      "default_tuning": {
+        "board_size": [
+          6,
+          4
+        ],
+        "shop_slots": 5,
+        "starting_gold": 10
+      }
+    },
+    {
+      "id": "blueprint.into_the_breach_like",
+      "reference_title": "Into the Breach-like",
+      "safe_reuse_notice": "只抽象小棋盘、敌人意图、推拉位移和目标防守结构，不复制具体单位、敌人、关卡或叙事。",
+      "primary_loop": "core_loop.tactical_turn",
+      "experience_intent": [
+        "低随机高策略",
+        "位置解谜",
+        "敌人意图可预判",
+        "每步高价值"
+      ],
+      "core_modules": [
+        "module.board_grid",
+        "module.unit_system",
+        "module.action_point",
+        "module.enemy_ai",
+        "module.enemy_intent",
+        "module.turn_order",
+        "module.push_pull",
+        "module.goal_condition"
+      ],
+      "optional_modules": [
+        "module.terrain_system",
+        "module.skill_cooldown"
+      ],
+      "minimal_skeleton_recipe": [
+        "生成 6x6 棋盘",
+        "玩家控制 2-3 个单位",
+        "敌人提前展示攻击目标",
+        "玩家通过移动、攻击、推拉改变局面",
+        "保护目标建筑或击败敌人"
+      ],
+      "fusion_hooks": [
+        "fusion.deckbuilder_plus_tactics"
+      ],
+      "default_tuning": {
+        "grid_size": [
+          6,
+          6
+        ],
+        "player_units": 3,
+        "enemy_units": 4
+      }
+    },
+    {
+      "id": "blueprint.factorio_like",
+      "reference_title": "Factorio-like",
+      "safe_reuse_notice": "只抽象资源节点、生产机器、运输连接、自动化和扩张结构，不复制具体配方、美术或科技树。",
+      "primary_loop": "core_loop.factory_expansion",
+      "experience_intent": [
+        "产线优化",
+        "自动化",
+        "扩张复利",
+        "系统联动"
+      ],
+      "core_modules": [
+        "module.resource_node",
+        "module.production_unit",
+        "module.transport_link",
+        "module.storage_system",
+        "module.unlock_tree"
+      ],
+      "optional_modules": [
+        "module.automation",
+        "module.enemy_attack",
+        "module.tech_tree"
+      ],
+      "minimal_skeleton_recipe": [
+        "地图上有资源点",
+        "玩家放置机器加工资源",
+        "用连接线运输资源",
+        "产物解锁新机器或扩张",
+        "目标是达到生产量或建造目标"
+      ],
+      "fusion_hooks": [
+        "fusion.factory_plus_tower_defense",
+        "fusion.idle_plus_factory"
+      ],
+      "default_tuning": {
+        "resource_nodes": 4,
+        "machine_types": 3,
+        "target_output": 100
+      }
+    },
+    {
+      "id": "blueprint.match3_like",
+      "reference_title": "Match-3-like",
+      "safe_reuse_notice": "只抽象棋盘交换、三连消除、下落补充和分数/目标结构，不复制关卡或美术。",
+      "primary_loop": "core_loop.puzzle_solve",
+      "experience_intent": [
+        "局面观察",
+        "短反馈消除",
+        "连锁爽感",
+        "有限步数压力"
+      ],
+      "core_modules": [
+        "module.board_grid",
+        "module.player_action",
+        "module.match_rule",
+        "module.chain_reaction",
+        "module.score_multiplier",
+        "module.goal_condition",
+        "module.step_limit"
+      ],
+      "optional_modules": [
+        "module.random_reward",
+        "module.relic_system"
+      ],
+      "minimal_skeleton_recipe": [
+        "生成不同颜色/形状棋子",
+        "玩家交换相邻棋子",
+        "三个以上相同对象消除得分",
+        "棋子下落并补充",
+        "在步数限制内达成目标"
+      ],
+      "fusion_hooks": [
+        "fusion.puzzle_plus_roguelite"
+      ],
+      "default_tuning": {
+        "grid_size": [
+          8,
+          8
+        ],
+        "piece_types": 5,
+        "step_limit": 20
+      }
+    },
+    {
+      "id": "blueprint.merge_game_like",
+      "reference_title": "Merge Game-like",
+      "safe_reuse_notice": "只抽象棋盘生成、合成升阶、订单目标和收集解锁结构，不复制具体物品链或美术。",
+      "primary_loop": "core_loop.merge_synthesis",
+      "experience_intent": [
+        "合成升级",
+        "整理棋盘",
+        "订单驱动",
+        "收集解锁"
+      ],
+      "core_modules": [
+        "module.board_grid",
+        "module.item_spawn",
+        "module.merge_units",
+        "module.order_system",
+        "module.unlock_tree",
+        "module.collection_book"
+      ],
+      "optional_modules": [
+        "module.energy_system",
+        "module.random_reward",
+        "module.idle_income"
+      ],
+      "minimal_skeleton_recipe": [
+        "棋盘上生成一级物品",
+        "两个同级物品合成更高等级",
+        "订单要求指定等级物品",
+        "完成订单获得资源或解锁新物品",
+        "棋盘满或能量空形成约束"
+      ],
+      "fusion_hooks": [
+        "fusion.merge_plus_auto_battler"
+      ],
+      "default_tuning": {
+        "grid_size": [
+          6,
+          6
+        ],
+        "merge_count": 2,
+        "active_orders": 3
+      }
+    },
+    {
+      "id": "blueprint.idle_clicker_like",
+      "reference_title": "Idle Clicker-like",
+      "safe_reuse_notice": "只抽象自动收益、升级复利、里程碑和重置结构，不复制具体主题或数值。",
+      "primary_loop": "core_loop.idle_incremental",
+      "experience_intent": [
+        "持续增长",
+        "低门槛",
+        "复利升级",
+        "里程碑目标"
+      ],
+      "core_modules": [
+        "module.idle_income",
+        "module.resource_system",
+        "module.upgrade_system",
+        "module.milestone_reward",
+        "module.unlock_tree"
+      ],
+      "optional_modules": [
+        "module.prestige_system",
+        "module.collection_book",
+        "module.quest_system",
+        "module.event_bonus"
+      ],
+      "minimal_skeleton_recipe": [
+        "资源随时间自动增加",
+        "玩家花费资源购买升级",
+        "升级提高每秒收益",
+        "达到里程碑解锁新升级",
+        "可选重置换永久加成"
+      ],
+      "fusion_hooks": [
+        "fusion.idle_plus_factory"
+      ],
+      "default_tuning": {
+        "income_per_second": 1,
+        "first_upgrade_cost": 10,
+        "milestones": [
+          100,
+          500,
+          2000
+        ]
+      }
+    }
+  ]
+}

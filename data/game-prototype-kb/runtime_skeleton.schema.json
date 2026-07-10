@@ -1,0 +1,206 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.com/game-prototype-kb/schemas/runtime_skeleton.schema.json",
+  "title": "Runtime Skeleton",
+  "description": "AI 生成可玩几何骨架游戏时的标准中间表示。",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "project_id",
+    "title",
+    "user_prompt",
+    "theme",
+    "primary_loop",
+    "loop_steps",
+    "modules",
+    "entities",
+    "player_actions",
+    "win_condition",
+    "fail_condition",
+    "map_spec",
+    "progression_spec"
+  ],
+  "additionalProperties": true,
+  "properties": {
+    "schema_version": {
+      "type": "string"
+    },
+    "project_id": {
+      "type": "string"
+    },
+    "title": {
+      "type": "string"
+    },
+    "user_prompt": {
+      "type": "string"
+    },
+    "generation_mode": {
+      "type": "string",
+      "enum": [
+        "kb_rule_based",
+        "llm_assisted",
+        "manual"
+      ]
+    },
+    "theme": {
+      "type": "object",
+      "required": [
+        "setting",
+        "placeholder_style"
+      ],
+      "properties": {
+        "setting": {
+          "type": "string"
+        },
+        "visual_style": {
+          "type": "string"
+        },
+        "placeholder_style": {
+          "type": "string"
+        },
+        "notes": {
+          "type": "string"
+        }
+      }
+    },
+    "primary_loop": {
+      "type": "string"
+    },
+    "secondary_loops": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "reference_blueprints": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "fusion_applied": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "intent": {
+          "type": "string"
+        }
+      }
+    },
+    "loop_steps": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "modules": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "config": {
+            "type": "object"
+          }
+        }
+      }
+    },
+    "entities": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "type",
+          "shape"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          },
+          "shape": {
+            "type": "string"
+          },
+          "stats": {
+            "type": "object"
+          },
+          "effect": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "player_actions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "resources": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "initial": {
+            "type": [
+              "number",
+              "integer"
+            ]
+          },
+          "source": {
+            "type": "string"
+          },
+          "sink": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "win_condition": {
+      "type": "string"
+    },
+    "fail_condition": {
+      "type": "string"
+    },
+    "map_spec": {
+      "type": "object"
+    },
+    "progression_spec": {
+      "type": "object"
+    },
+    "runtime_notes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "playtest_tuning": {
+      "type": "object"
+    },
+    "next_editor_handoff": {
+      "type": "object"
+    }
+  }
+}

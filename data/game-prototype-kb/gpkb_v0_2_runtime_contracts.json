@@ -1,0 +1,58 @@
+{
+  "schema_version": "0.2.0",
+  "purpose": "Runtime rule contracts for turning gameplay recipes into real playable greybox systems.",
+  "core_loop_contracts": {
+    "core_loop.wave_defense": {
+      "required_systems": ["economy", "build", "tower_upgrade", "wave_manager", "base_health", "victory_result"],
+      "economy": {
+        "resources": ["gold"],
+        "sources": ["kill_reward", "wave_clear_reward", "card_reward"],
+        "sinks": ["build_tower", "upgrade_tower"]
+      },
+      "progression": {
+        "session_type": "stage",
+        "win_condition": "clear_all_waves",
+        "fail_condition": "base_hp_zero",
+        "score_inputs": ["base_hp_remaining", "gold_remaining", "kills"]
+      },
+      "minimum_runtime_actions": ["click_empty_slot_to_build", "click_tower_to_upgrade", "click_card_to_modify_wave"]
+    },
+    "core_loop.survival_growth": {
+      "required_systems": ["player_movement", "spawn_director", "auto_attack", "exp_drop", "level_up_choice", "run_result"],
+      "progression": {
+        "session_type": "timed_survival",
+        "win_condition": "survive_target_seconds",
+        "fail_condition": "player_hp_zero",
+        "upgrade_choice_count": 3
+      },
+      "minimum_runtime_actions": ["wasd_move", "click_upgrade_choice", "click_card_if_fused"]
+    },
+    "core_loop.deck_builder": {
+      "required_systems": ["draw_pile", "hand", "discard_pile", "energy", "enemy_intent", "reward_draft", "encounter_result"],
+      "progression": {
+        "session_type": "encounter_chain",
+        "win_condition": "clear_target_encounters",
+        "fail_condition": "player_hp_zero",
+        "reward_choice_count": 3
+      },
+      "minimum_runtime_actions": ["click_card_to_play", "click_reward_to_add_to_deck"]
+    }
+  },
+  "fusion_contracts": {
+    "core_loop.wave_defense+core_loop.deck_builder": {
+      "lifecycle_hooks": ["before_wave", "on_card_played", "on_wave_clear"],
+      "shared_state": ["gold", "tower_stats", "enemy_modifiers", "wave_timing"],
+      "rule": "Cards must directly alter build economy, tower output, enemy pressure, or hero skills."
+    },
+    "core_loop.wave_defense+core_loop.survival_growth": {
+      "lifecycle_hooks": ["on_kill", "on_level_up", "during_wave"],
+      "shared_state": ["hero_position", "exp", "tower_stats", "base_hp"],
+      "rule": "Kills feed growth choices that improve hero, towers, or base survival."
+    },
+    "core_loop.survival_growth+core_loop.deck_builder": {
+      "lifecycle_hooks": ["on_level_up", "on_card_played", "on_kill"],
+      "shared_state": ["weapon_stats", "spawn_pressure", "card_pool", "exp"],
+      "rule": "Cards must modify weapons, attack area, spawn pressure, or immediate survivability."
+    }
+  }
+}

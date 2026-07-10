@@ -1,0 +1,661 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Game Editor MVP</title>
+    <link rel="icon" href="data:," />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css?v=chat-ui-20260708-20" />
+  </head>
+  <body>
+    <aside class="shell-sidebar">
+      <div class="brand">
+        <div class="brand-main">
+          <img class="brand-mark" src="assets/logo342.png" alt="" aria-hidden="true" />
+          <span>抖音AI工作台</span>
+        </div>
+        <button class="brand-mode" type="button">
+          <span>设计</span>
+          <span class="material-symbols-rounded" aria-hidden="true">expand_more</span>
+        </button>
+        <button class="sidebar-collapse" type="button" aria-label="收起侧边栏">
+          <span class="material-symbols-rounded" aria-hidden="true">dock_to_left</span>
+        </button>
+      </div>
+      <button class="primary-action">
+        <span class="material-symbols-rounded button-icon" aria-hidden="true">add</span>
+        <span>AI 创作</span>
+      </button>
+      <nav class="side-nav">
+        <button><span class="material-symbols-rounded" aria-hidden="true">integration_instructions</span><span>Skills</span></button>
+        <button><span class="material-symbols-rounded" aria-hidden="true">inventory_2</span><span>资源库</span></button>
+        <button><span class="material-symbols-rounded" aria-hidden="true">home_app_logo</span><span>创意广场</span></button>
+        <button><span class="material-symbols-rounded" aria-hidden="true">article</span><span>AI资讯</span></button>
+        <button><span class="material-symbols-rounded" aria-hidden="true">fact_check</span><span>评测中心</span></button>
+      </nav>
+      <section class="project-list">
+        <div class="section-title">
+          <span>项目列表</span>
+          <span class="project-tools">
+            <button type="button" aria-label="搜索项目"><span class="material-symbols-rounded" aria-hidden="true">search</span></button>
+            <button type="button" aria-label="项目视图"><span class="material-symbols-rounded" aria-hidden="true">format_list_bulleted</span></button>
+          </span>
+        </div>
+        <div class="project-tree">
+          <button class="project-item project-root active" type="button">
+            <span class="material-symbols-rounded" aria-hidden="true">expand_more</span>
+            <strong>SANGUO RUSHII</strong>
+            <span class="material-symbols-rounded project-more" aria-hidden="true">more_horiz</span>
+          </button>
+          <div class="project-children">
+            <button class="project-child active" type="button">
+              <span class="project-dot"></span>
+              <span class="project-child-icon project-child-file"><span class="material-symbols-rounded" aria-hidden="true">description</span></span>
+              <strong>项目文件</strong>
+            </button>
+            <button class="project-child" type="button">
+              <span class="project-dot"></span>
+              <span class="project-child-icon project-child-db"><span class="material-symbols-rounded" aria-hidden="true">database</span></span>
+              <strong>数据库</strong>
+            </button>
+            <button class="project-child" type="button">
+              <span class="project-dot"></span>
+              <span class="project-child-icon project-child-publish"><span class="material-symbols-rounded" aria-hidden="true">rocket_launch</span></span>
+              <strong>发布</strong>
+            </button>
+          </div>
+          <button class="project-item" type="button"><span class="material-symbols-rounded" aria-hidden="true">chevron_right</span><strong>未命名项目</strong></button>
+          <button class="project-item" type="button"><span class="material-symbols-rounded" aria-hidden="true">chevron_right</span><strong>未命名项目</strong></button>
+        </div>
+      </section>
+      <div class="user-row">
+        <img class="user-avatar" src="assets/avatar43.png" alt="" aria-hidden="true" />
+        <span>Funkja</span>
+      </div>
+    </aside>
+
+    <main class="workspace">
+      <section class="chat-lane">
+        <header class="lane-header">
+          <div>
+            <strong>SANGUO RUSHII</strong>
+            <span>最近更新时间：10:49:57</span>
+          </div>
+        </header>
+        <div class="chat-stream" id="chatStream">
+          <article class="chat-message chat-message-assistant assistant-result-card">
+            <div class="chat-message-meta">
+              <span class="assistant-avatar"><span class="material-symbols-rounded" aria-hidden="true">auto_awesome</span> AI Copilot</span>
+              <time>已就绪</time>
+            </div>
+            <strong>描述一个玩法，我会生成可试玩 demo</strong>
+            <p>我会先识别题材和玩法类型，再同步刷新小程序预览、玩法编辑、地图编辑和平衡性编辑上下文。</p>
+            <div class="chat-card-meta">
+              <span>塔防</span>
+              <span>Roguelite 卡牌</span>
+              <span>幸存者</span>
+              <span>战棋</span>
+              <span>自走棋</span>
+            </div>
+          </article>
+          <span id="chatNotice" hidden></span>
+        </div>
+        <footer class="composer">
+          <div class="composer-shell" id="composerShell">
+            <div class="extension-popover" id="extensionPopover" hidden>
+              <div class="extension-search-row">
+                <div class="extension-search">
+                  <span class="material-symbols-rounded" aria-hidden="true">search</span>
+                  <input placeholder="搜索Skills/工具/生成式模型/知识库..." aria-label="搜索扩展" />
+                </div>
+                <button class="extension-reset" type="button">
+                  <span class="material-symbols-rounded" aria-hidden="true">refresh</span>
+                  <span>恢复默认</span>
+                </button>
+              </div>
+              <div class="extension-tabs" role="tablist" aria-label="扩展类型">
+                <button type="button" role="tab" aria-selected="false" data-extension-tab="all">全部 <span>2</span></button>
+                <button class="active" type="button" role="tab" aria-selected="true" data-extension-tab="skills">Skills <span>1</span></button>
+                <button type="button" role="tab" aria-selected="false" data-extension-tab="tools">工具 <span>1</span></button>
+                <button type="button" role="tab" aria-selected="false" data-extension-tab="models">生成式模型 <span>0</span></button>
+                <button type="button" role="tab" aria-selected="false" data-extension-tab="knowledge">知识库 <span>0</span></button>
+              </div>
+              <div class="extension-list">
+                <article class="extension-row" data-extension-category="skills">
+                  <div class="extension-row-main">
+                    <strong>世界观 Skill</strong>
+                    <span class="extension-badge">通识</span>
+                    <span class="extension-badge extension-badge-soft">默认启用</span>
+                    <p>用于保持题材设定、角色关系、叙事基调和世界规则一致。</p>
+                  </div>
+                  <label class="extension-switch" aria-label="世界观 Skill 开关">
+                    <input type="checkbox" checked />
+                    <span></span>
+                  </label>
+                </article>
+                <article class="extension-row" data-extension-category="tools" hidden>
+                  <div class="extension-row-main">
+                    <strong>素材识别工具</strong>
+                    <span class="extension-badge">工具</span>
+                    <p>读取上传图片或视频，生成可编辑地图背景和对象草稿。</p>
+                  </div>
+                  <label class="extension-switch" aria-label="素材识别工具开关">
+                    <input type="checkbox" />
+                    <span></span>
+                  </label>
+                </article>
+              </div>
+            </div>
+            <div class="chat-attachment-preview" id="chatAttachmentPreview" hidden></div>
+            <input id="chatAttachmentInput" type="file" accept="image/*,video/*" multiple hidden />
+            <div class="composer-input-row">
+              <textarea id="chatComposerInput" rows="3" placeholder="请开始你的游戏创作&#10;支持图片/视频构建地图，右侧编辑应用会回写主流程"></textarea>
+            </div>
+            <div class="composer-toolbar">
+              <div class="composer-toolbar-left">
+                <button class="composer-extension-button" id="chatExtensionsToggle" type="button" aria-expanded="false" aria-controls="extensionPopover">
+                  <span class="material-symbols-rounded" aria-hidden="true">extension</span>
+                  <span>扩展</span>
+                  <strong>2</strong>
+                </button>
+                <button class="composer-icon-button" id="chatAttach" type="button" aria-label="添加图片或视频">
+                  <span class="material-symbols-rounded" aria-hidden="true">attach_file</span>
+                </button>
+                <button class="composer-icon-button composer-share-button" type="button" aria-label="分享或导入">
+                  <span class="material-symbols-rounded" aria-hidden="true">polyline</span>
+                </button>
+              </div>
+              <div class="composer-toolbar-right">
+                <button class="composer-auto-button" id="chatModeButton" type="button">
+                  <span class="material-symbols-rounded" aria-hidden="true">auto_awesome</span>
+                  <span>Auto</span>
+                  <span class="material-symbols-rounded" aria-hidden="true">expand_more</span>
+                </button>
+                <button class="composer-icon-button" id="chatVoice" type="button" aria-label="语音输入">
+                  <span class="material-symbols-rounded" aria-hidden="true">mic</span>
+                </button>
+                <button class="composer-send" id="chatSend" type="button" aria-label="发送">
+                  <span class="material-symbols-rounded" aria-hidden="true">arrow_upward</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </footer>
+      </section>
+
+      <div class="lane-resizer" id="laneResizer" role="separator" aria-label="调整对话区和工作区宽度"></div>
+
+      <section class="preview-lane">
+        <header class="top-tabs">
+          <button class="tab active" data-view="preview">预览</button>
+          <button class="pin-tab active" id="pinPreview" aria-pressed="true" title="固定预览">固定</button>
+          <button class="tab" data-view="files">项目文件</button>
+          <button class="tab" data-view="gameplay">玩法编辑</button>
+          <button class="tab" data-view="map">地图编辑</button>
+          <button class="tab" data-view="balance">平衡性编辑</button>
+          <button class="tab add-tab" aria-label="新增标签">
+            <span class="material-symbols-rounded" aria-hidden="true">add</span>
+          </button>
+        </header>
+
+        <div class="workbench">
+          <section class="preview-stage view-panel active" data-panel="preview">
+            <div class="pinned-label">固定预览</div>
+            <div class="preview-device-stack">
+              <div class="device-shell">
+                <canvas id="previewCanvas" width="768" height="1792"></canvas>
+              </div>
+            </div>
+            <div class="preview-bottom-bar">
+              <button class="preview-replay-button" id="previewReplay" type="button">
+                <span class="material-symbols-rounded button-icon" aria-hidden="true">replay</span>
+                <span>Replay</span>
+              </button>
+              <div class="zoom-control">
+                <button id="previewZoomOut" type="button" aria-label="缩小预览">
+                  <span class="material-symbols-rounded" aria-hidden="true">remove</span>
+                </button>
+                <span id="previewZoomValue">100%</span>
+                <button id="previewZoomIn" type="button" aria-label="放大预览">
+                  <span class="material-symbols-rounded" aria-hidden="true">add</span>
+                </button>
+              </div>
+            </div>
+          </section>
+
+          <div class="split-resizer" id="splitResizer" role="separator" aria-label="调整预览和编辑器宽度"></div>
+
+          <section class="file-stage view-panel" data-panel="files">
+            <div class="file-toolbar">
+              <button class="active">图片</button>
+              <button>视频</button>
+              <button>音频</button>
+              <button>SAR游戏素材</button>
+              <select>
+                <option>全部来源</option>
+              </select>
+              <select>
+                <option>最新优先</option>
+              </select>
+            </div>
+            <div class="asset-grid" id="assetGrid"></div>
+          </section>
+
+          <section class="gameplay-stage view-panel" data-panel="gameplay">
+            <aside class="gameplay-tools is-fast-mode">
+              <div class="gameplay-tool-scroll">
+              <div class="tool-group gameplay-pro-only">
+                <div class="panel-title">玩法实验台</div>
+                <p class="tool-hint">左侧 Chat 生成初始配方；这里只调整可试玩规则和数值强度。</p>
+              </div>
+              <div class="tool-group gameplay-pro-only fusion-lab-group">
+                <div class="panel-title">AI 融合生成</div>
+                <div class="fusion-legacy-controls" aria-hidden="true">
+                  <select id="gameplayPrimaryLoop" tabindex="-1">
+                    <option value="core_loop.wave_defense">塔防</option>
+                    <option value="core_loop.survival_growth">幸存者</option>
+                    <option value="core_loop.deck_builder">Roguelite 卡牌</option>
+                    <option value="core_loop.auto_battler">自走棋</option>
+                    <option value="core_loop.tactical_turn">战棋</option>
+                  </select>
+                  <select id="gameplaySecondaryLoop" tabindex="-1">
+                    <option value="">无</option>
+                    <option value="core_loop.wave_defense">塔防</option>
+                    <option value="core_loop.deck_builder">Roguelite 卡牌</option>
+                    <option value="core_loop.survival_growth">幸存者</option>
+                  </select>
+                </div>
+                <div class="fusion-lab-panel">
+                  <div class="fusion-globe" id="gameplayFusionOrbit" role="listbox" aria-label="AI 融合生成">
+                    <canvas id="fusionGlobeCanvas" aria-hidden="true"></canvas>
+                    <div class="fusion-globe-shade" aria-hidden="true"></div>
+                    <div class="fusion-globe-labels" id="fusionGlobeLabels"></div>
+                    <div class="fusion-globe-center">
+                      <span>当前底盘</span>
+                      <strong>塔防</strong>
+                    </div>
+                  </div>
+                  <div class="fusion-custom-row" id="fusionCustomRow" hidden>
+                    <input id="fusionCustomInput" placeholder="描述想要的融合感觉，例如：更像战棋布阵" />
+                    <button id="fusionCustomApply" type="button">生成</button>
+                  </div>
+                  <div class="fusion-focus-summary" id="fusionFocusSummary"></div>
+                </div>
+                <div class="compact-field fusion-candidate-section">
+                  <div class="fusion-section-label">
+                    <span>融合方案</span>
+                  </div>
+                  <div class="fusion-template-control" id="gameplayFusionTemplate">
+                    <button class="active" data-tuning-field="fusionTemplate" data-tuning-value="wave_tactic_cards">
+                      <strong>波前战术牌</strong>
+                      <span>每波前选一张牌，改变本波建塔、敌人或奖励。</span>
+                    </button>
+                    <button data-tuning-field="fusionTemplate" data-tuning-value="build_cards">
+                      <strong>牌组防线</strong>
+                      <span>建塔、升级和强化来自手牌，防线随牌组变化。</span>
+                    </button>
+                    <button data-tuning-field="fusionTemplate" data-tuning-value="risk_contract">
+                      <strong>风险契约</strong>
+                      <span>拿更高资源收益，但下一波敌人获得强化。</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+              <div class="tool-group">
+                <div class="panel-title">快速微调</div>
+                <label class="slider-setting">
+                  <span>压力强度 <small>敌人强度 + 出兵频率</small></span>
+                  <input type="range" min="50" max="200" value="100" data-tuning-range="pressureIntensity" />
+                  <strong data-tuning-output="pressureIntensity">100</strong>
+                </label>
+                <label class="slider-setting">
+                  <span>经济宽松度 <small>初始金币 + 击杀收益</small></span>
+                  <input type="range" min="50" max="200" value="100" data-tuning-range="resourceGenerosity" />
+                  <strong data-tuning-output="resourceGenerosity">100</strong>
+                </label>
+                <label class="slider-setting" data-tuning-visibility="construction">
+                  <span>建造成本 <small>建塔费用 + 升级费用</small></span>
+                  <input type="range" min="50" max="200" value="100" data-tuning-range="constructionCost" />
+                  <strong data-tuning-output="constructionCost">100</strong>
+                </label>
+                <label class="slider-setting" data-tuning-visibility="reward">
+                  <span>卡牌收益 <small>卡牌奖励 + 成长速度</small></span>
+                  <input type="range" min="50" max="200" value="100" data-tuning-range="cardRewardScale" />
+                  <strong data-tuning-output="cardRewardScale">100</strong>
+                </label>
+                <label class="slider-setting" data-tuning-visibility="risk">
+                  <span>风险惩罚 <small>风险契约的敌方强化</small></span>
+                  <input type="range" min="50" max="200" value="100" data-tuning-range="riskPenaltyScale" />
+                  <strong data-tuning-output="riskPenaltyScale">100</strong>
+                </label>
+                <label class="slider-setting" data-tuning-visibility="hero">
+                  <span>英雄强度 <small>英雄伤害 + 生存价值</small></span>
+                  <input type="range" min="0" max="200" value="100" data-tuning-range="heroPower" />
+                  <strong data-tuning-output="heroPower">100</strong>
+                </label>
+                <div class="tuning-impact-list" id="gameplayTuningImpact"></div>
+              </div>
+              </div>
+              <div class="tool-group gameplay-control-bar">
+                <div id="gameplayRuntimeStatus" class="draft-status">试玩：等待生成</div>
+                <div class="gameplay-actionbar">
+                  <button id="gameplayApply" type="button" disabled>
+                    <span class="material-symbols-rounded button-icon" aria-hidden="true">check</span>
+                    <span>应用</span>
+                  </button>
+                  <div class="gameplay-mode-switch" id="gameplayModeSwitch" role="tablist" aria-label="玩法实验台模式">
+                    <button class="active" type="button" role="tab" aria-selected="true" data-gameplay-mode="fast">Fast</button>
+                    <button type="button" role="tab" aria-selected="false" data-gameplay-mode="pro">Pro</button>
+                  </div>
+                </div>
+              </div>
+            </aside>
+            <div class="gameplay-debug-sink" aria-hidden="true">
+              <section id="gameplaySummary"></section>
+              <div id="gameplayRoute"></div>
+              <div id="gameplayFeedback"></div>
+              <div id="gameplayModules"></div>
+              <div id="gameplayEntities"></div>
+              <pre id="gameplaySkeletonJson"></pre>
+            </div>
+          </section>
+
+          <section class="map-stage view-panel" data-panel="map">
+            <aside class="editor-tools">
+              <div class="tool-group">
+                <div class="panel-title">地图编辑</div>
+                <p class="tool-hint">固定预览后，在中间预览上点击或拖拽编辑地图。</p>
+                <div class="compact-field">
+                  游戏类型
+                  <div class="segmented-control game-type-control" id="gameType">
+                    <button class="active" data-game-type="towerDefense">塔防</button>
+                    <button data-game-type="survivalDefense">守塔割草</button>
+                    <button data-game-type="shooter">射击</button>
+                  </div>
+                </div>
+                <label class="compact-field">
+                  关卡地图
+                  <select id="mapSelect">
+                    <option value="hulao-entry">第1关 虎牢关入口</option>
+                    <option value="gate-defense">第2关 城门防线</option>
+                    <option value="boss-camp">第3关 Boss营地</option>
+                  </select>
+                </label>
+                <div class="compact-field">
+                  资源导入
+                  <div class="resource-strip" id="resourceStrip">
+                    <label class="resource-tile add-resource">
+                      <input id="mapAssetInput" type="file" accept="image/png,image/jpeg,image/webp,image/gif" multiple />
+                      <span class="material-symbols-rounded" aria-hidden="true">add_photo_alternate</span>
+                    </label>
+                    <div class="resource-tile background-resource active" data-resource-kind="background" role="button" tabindex="0">
+                      <span>底图</span>
+                      <small>默认</small>
+                    </div>
+                  </div>
+                  <input id="mapBackgroundInput" type="file" accept="image/*" hidden />
+                </div>
+                <div class="compact-field shooter-scroll-settings hidden" id="shooterScrollSettings">
+                  卷轴设置
+                  <div class="selected-config-grid">
+                    <label class="tool-setting">
+                      卷轴方向
+                      <select id="mapScrollDirection">
+                        <option value="vertical">纵向</option>
+                        <option value="horizontal">横向</option>
+                      </select>
+                    </label>
+                    <label class="tool-setting">
+                      卷轴速度
+                      <select id="mapScrollSpeed">
+                        <option value="slow">慢</option>
+                        <option value="medium" selected>中</option>
+                        <option value="fast">快</option>
+                      </select>
+                    </label>
+                  </div>
+                </div>
+                <div class="compact-field map-object-field">
+                  编辑对象
+                  <div class="segmented-control edit-object-control" id="editObject">
+                    <button class="active" data-edit-object="point">点位</button>
+                    <button data-edit-object="path">路径</button>
+                    <button data-edit-object="area">区域</button>
+                  </div>
+                </div>
+                <div class="compact-field map-object-field">
+                  对象类型
+                  <div class="type-button-grid" id="semanticTypeButtons"></div>
+                </div>
+              </div>
+              <div class="tool-group selected-config hidden" id="selectedConfig"></div>
+              <div class="tool-group object-settings" id="pointSettings" data-object-settings="point">
+                <div class="panel-title">点位设置</div>
+                <p class="tool-hint">点击空白处新增点位，点击已有点位选中；删除统一在对象列表中操作。</p>
+              </div>
+              <div class="tool-group object-settings hidden" id="pathSettings" data-object-settings="path">
+                <div class="panel-title">路径设置</div>
+                <p class="tool-hint normal-path-setting">连续点击添加路径节点，双击或点击完成结束；曲线会按节点平滑显示。</p>
+                <label class="tool-setting normal-path-setting">
+                  画线方式
+                  <div class="segmented-control path-mode-control" id="pathDrawMode">
+                    <button class="active" data-path-mode="polyline">折线</button>
+                    <button data-path-mode="curve">曲线</button>
+                  </div>
+                </label>
+                <label class="tool-setting normal-path-setting">
+                  路径宽度
+                  <div class="range-row">
+                    <input id="pathWidth" type="range" min="4" max="96" step="2" value="16" />
+                    <span id="pathWidthValue">16</span>
+                  </div>
+                </label>
+                <button class="normal-path-setting" id="finishPolyline">完成折线</button>
+                <div class="shooter-rule-setting hidden" id="shooterPathSettings">
+                  <p class="tool-hint">选择敌军路线组合，AI/模拟会随机生成实际飞行路线。</p>
+                  <label class="tool-setting hidden">
+                    卷轴方向
+                    <select id="scrollDirection">
+                      <option value="vertical">纵向卷轴</option>
+                      <option value="horizontal">横向卷轴</option>
+                    </select>
+                  </label>
+                  <label class="tool-setting">
+                    入场位置
+                    <select id="shooterEntry">
+                      <option value="top_random">顶部随机</option>
+                      <option value="left_random">左侧随机</option>
+                      <option value="right_random">右侧随机</option>
+                      <option value="edge_random">全边缘随机</option>
+                      <option value="anchor">由点位锚点生成</option>
+                    </select>
+                  </label>
+                  <label class="tool-setting">
+                    运动方式
+                    <select id="shooterMovement">
+                      <option value="straight">直线推进</option>
+                      <option value="s_curve">S 型</option>
+                      <option value="diagonal">斜向穿插</option>
+                      <option value="dive">俯冲</option>
+                      <option value="chase">追踪玩家</option>
+                      <option value="ai_random">AI 随机</option>
+                    </select>
+                  </label>
+                  <label class="tool-setting">
+                    编队方式
+                    <select id="shooterFormation">
+                      <option value="single">单体</option>
+                      <option value="line">横排</option>
+                      <option value="v">V 字</option>
+                      <option value="double">双列</option>
+                      <option value="ai_random">AI 随机</option>
+                    </select>
+                  </label>
+                  <label class="tool-setting">
+                    出兵频率
+                    <select id="shooterFrequency">
+                      <option value="low">低频</option>
+                      <option value="medium">中频</option>
+                      <option value="high">高频</option>
+                    </select>
+                  </label>
+                  <button id="addShooterRouteRule">添加路线规则</button>
+                </div>
+              </div>
+              <div class="tool-group object-settings hidden brush-settings" id="areaSettings" data-object-settings="area">
+                <div class="panel-title">区域笔刷设置</div>
+                <p class="tool-hint" id="toolSettingHint">选择区域类型后，在预览上拖拽绘制或擦除。</p>
+                <label class="tool-setting">
+                  区域操作
+                  <div class="segmented-control area-action-control" id="areaAction">
+                    <button class="active" data-area-action="brush">画笔</button>
+                    <button data-area-action="erase">擦除</button>
+                  </div>
+                </label>
+                <label class="tool-setting" id="blockingTypeSetting">
+                  阻挡类型
+                  <div class="segmented-control collision-type-control" id="collisionType">
+                    <button class="active brush-movement" data-blocking-type="movement">移动</button>
+                    <button class="brush-projectile" data-blocking-type="projectile">弹道</button>
+                    <button class="brush-vision" data-blocking-type="vision">视野</button>
+                    <button class="brush-all" data-blocking-type="all">全部</button>
+                  </div>
+                </label>
+                <label class="tool-setting">
+                  笔刷大小
+                  <div class="range-row">
+                    <input id="brushSize" type="range" min="16" max="120" step="4" value="48" />
+                    <span id="brushSizeValue">48</span>
+                  </div>
+                </label>
+                <div class="shooter-rule-setting hidden" id="shooterObstacleSettings">
+                  <label class="tool-setting">
+                    障碍素材
+                    <input id="obstacleAssetInput" type="file" accept="image/*" />
+                  </label>
+                  <label class="tool-setting">
+                    碰撞标记
+                    <select id="obstacleCollisionMark">
+                      <option value="brush">笔刷标记</option>
+                      <option value="auto">自动识别</option>
+                    </select>
+                  </label>
+                  <label class="tool-setting">
+                    移动方式
+                    <select id="obstacleMovement">
+                      <option value="scroll">随背景滚动</option>
+                      <option value="drift">独立漂移</option>
+                      <option value="fixed">固定悬浮</option>
+                      <option value="ai_random">AI 随机</option>
+                    </select>
+                  </label>
+                  <label class="tool-setting">
+                    生成频率
+                    <select id="obstacleFrequency">
+                      <option value="low">低频</option>
+                      <option value="medium">中频</option>
+                      <option value="high">高频</option>
+                    </select>
+                  </label>
+                  <label class="tool-setting">
+                    碰撞规则
+                    <select id="obstacleCollisionRule">
+                      <option value="player">阻挡玩家</option>
+                      <option value="projectile">阻挡子弹</option>
+                      <option value="all">全部阻挡</option>
+                    </select>
+                  </label>
+                </div>
+              </div>
+              <div class="object-list-section">
+                <div class="object-list-head">
+                  <div class="panel-title object-title">对象列表</div>
+                  <button id="clearLayer">清空草稿层</button>
+                </div>
+                <div class="object-list" id="objectList"></div>
+              </div>
+              <div class="draft-status" id="draftStatus">草稿：无未应用修改</div>
+              <div class="draft-status test-status" id="testStatus">测试角色：WASD / 方向键移动，草稿碰撞实时生效。</div>
+              <div class="draft-status simulation-status" id="simulationStatus">单位行进：未开启</div>
+              <div class="editor-bottom-actions">
+                <button id="unitTravelToggle" aria-pressed="false">开始模拟</button>
+                <button id="applyDraft">应用到预览</button>
+              </div>
+            </aside>
+            <div class="map-canvas-wrap">
+              <canvas id="mapCanvas" width="768" height="1792"></canvas>
+            </div>
+          </section>
+
+          <section class="balance-stage view-panel" data-panel="balance">
+            <div class="balance-workspace">
+              <nav class="balance-main-tabs" aria-label="平衡性工作流">
+                <button class="active" data-balance-main="report">试跑报告</button>
+                <button data-balance-main="plans">调整方案</button>
+                <button data-balance-main="config">数值配置</button>
+              </nav>
+              <section class="balance-main-panel active" data-balance-panel="report">
+                <div id="balanceReport" class="balance-report"></div>
+              </section>
+              <section class="balance-main-panel" data-balance-panel="plans">
+                <div id="balancePlans" class="balance-plan-grid"></div>
+              </section>
+              <section class="balance-main-panel" data-balance-panel="config">
+                <div class="balance-horizontal-frame balance-menu-frame">
+                  <nav class="balance-menu" id="balanceMenu" aria-label="平衡性配置分类">
+                    <button class="active" data-balance="rules">关卡规则</button>
+                  </nav>
+                  <button class="balance-scroll-next" id="balanceMenuNext" type="button" aria-label="查看更多配置分类" hidden>
+                    <span class="material-symbols-rounded" aria-hidden="true">chevron_right</span>
+                  </button>
+                </div>
+                <header class="table-header">
+                  <div>
+                    <strong id="balanceTitle">关卡规则</strong>
+                    <span id="balanceSubtitle">塔防数值层：配置、测算、异常检查</span>
+                  </div>
+                </header>
+                <div class="balance-horizontal-frame balance-table-frame">
+                  <div class="balance-table-scroll">
+                    <table class="balance-table">
+                      <thead id="balanceTableHead">
+                      </thead>
+                      <tbody id="balanceRows"></tbody>
+                    </table>
+                  </div>
+                  <button class="balance-scroll-next balance-table-next" id="balanceTableNext" type="button" aria-label="向右查看更多列" hidden>
+                    <span class="material-symbols-rounded" aria-hidden="true">chevron_right</span>
+                  </button>
+                </div>
+                <section class="insight-panel">
+                  <div class="panel-title">检查结果</div>
+                  <div id="insightText" class="insight-content">当前参数曲线可用于第一轮试玩验证。</div>
+                </section>
+              </section>
+              <div class="balance-runbar">
+                <div>
+                  <strong id="balanceRunStatus">等待试跑</strong>
+                  <span id="balanceRunMeta">选择方案或修改数值后开始试跑，预览区会实时显示测试过程。</span>
+                </div>
+                <div class="balance-run-actions">
+                  <select id="balanceTestSpeed" aria-label="测试速度">
+                    <option value="1">1x</option>
+                    <option value="2" selected>2x</option>
+                    <option value="4">4x</option>
+                  </select>
+                  <button id="runBalanceTest" disabled>开始试跑</button>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+      </section>
+    </main>
+
+    <script src="assets/three.min.js"></script>
+    <script src="app.js?v=chat-ui-20260708-20"></script>
+  </body>
+</html>
