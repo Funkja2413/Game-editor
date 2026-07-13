@@ -1053,7 +1053,14 @@ function syncScrollControls() {
 
 function renderSelectedConfig() {
   const assetSelected = state.selectedCanvasEntity?.kind === "asset";
+  const selectedPath = findSelectedPath();
   if (objectListSection) objectListSection.classList.toggle("hidden", assetSelected);
+  if (selectedPath) {
+    selectedConfig.classList.remove("hidden");
+    selectedConfig.innerHTML = renderRouteExecutionConfig(selectedPath);
+    updateToolSettings();
+    return;
+  }
   if (!assetSelected) {
     selectedConfig.classList.add("hidden");
     selectedConfig.innerHTML = "";
@@ -1069,6 +1076,90 @@ function renderSelectedConfig() {
   }
   selectedConfig.innerHTML = renderAssetConfig(object);
   updateToolSettings();
+}
+
+function findSelectedPath() {
+  if (state.selectedObject?.bucket !== "paths") return null;
+  const target = state.selectedObject.source === "map" ? state.map : state.draft;
+  return target.paths.find((path) => path.id === state.selectedObject.id) || null;
+}
+
+function routeSourceOptions(path) {
+  const pointOptions = [...state.map.points, ...state.draft.points]
+    .filter((point) => path.type === "movement_route"
+      ? ["enemy_spawn", "boss"].includes(point.type)
+      : ["player_spawn", "enemy_spawn", "boss"].includes(point.type))
+    .map((point) => ({
+      value: `point:${point.id}`,
+      label: `${semanticLabel(point.type)} · ${point.name || fallbackPointName(point)}`
+    }));
+  const areaOptions = path.type === "movement_route"
+    ? [...state.map.placementZones, ...state.draft.placementZones]
+      .filter((area) => area.areaType === "spawn_area")
+      .map((area) => ({ value: `area:${area.id}`, label: `敌人刷新区 · ${area.name || fallbackObjectName("区域", area.id)}` }))
+    : [];
+  return [...pointOptions, ...areaOptions];
+}
+
+function routeSourceValue(path) {
+  const id = path.sourceBindingId || path.startPointId;
+  if (!id) return "";
+  return `${path.sourceBindingKind || "point"}:${id}`;
+}
+
+function renderRouteExecutionConfig(path) {
+  const sources = routeSourceOptions(path);
+  const sourceValue = routeSourceValue(path);
+  const actorOptions = path.type === "movement_route"
+    ? [
+        ["source_all", "来源生成的全部敌人"],
+        ["normal_enemy", "普通敌人"],
+        ["elite_enemy", "精英敌人"],
+        ["boss", "Boss"]
+      ]
+    : [
+        ["player", "玩家"],
+        ["hero", "英雄"],
+        ["enemy", "指定敌人"],
+        ["boss", "Boss"],
+        ["npc", "NPC/过场角色"]
+      ];
+  const actorValue = path.actorScope || (path.type === "movement_route" ? "source_all" : "player");
+  return `
+    <div class="panel-title">路线执行关系</div>
+    <p class="tool-hint">明确谁从哪个点位或刷新区开始执行当前路线。</p>
+    <label class="tool-setting">
+      执行来源
+      <select data-route-field="source">
+        <option value="">未绑定</option>
+        ${sources.map((option) => `<option value="${escapeAttribute(option.value)}" ${option.value === sourceValue ? "selected" : ""}>${escapeHtml(option.label)}</option>`).join("")}
+      </select>
+    </label>
+    <label class="tool-setting">
+      执行角色
+      <select data-route-field="actorScope">
+        ${actorOptions.map(([value, label]) => `<option value="${value}" ${value === actorValue ? "selected" : ""}>${label}</option>`).join("")}
+      </select>
+    </label>
+    ${path.type === "movement_route" ? `
+      <label class="tool-setting">
+        多路线分配
+        <select data-route-field="assignmentMode">
+          <option value="all" ${(path.assignmentMode || "all") === "all" ? "selected" : ""}>全部使用此路线</option>
+          <option value="random" ${path.assignmentMode === "random" ? "selected" : ""}>在可用路线中随机</option>
+        </select>
+      </label>
+    ` : `
+      <label class="tool-setting">
+        运行方式
+        <select data-route-field="loopMode">
+          <option value="once" ${(path.loopMode || "once") === "once" ? "selected" : ""}>单次</option>
+          <option value="ping_pong" ${path.loopMode === "ping_pong" ? "selected" : ""}>往返</option>
+          <option value="loop" ${path.loopMode === "loop" ? "selected" : ""}>循环</option>
+        </select>
+      </label>
+    `}
+  `;
 }
 
 function renderResourceStrip() {
@@ -2314,10 +2405,10 @@ function pointObjectRow(point, source) {
 
 function pathObjectRow(path, source) {
   const typeLabel = semanticLabel(path.type);
-  const name = path.name || fallbackObjectName("路径", path.id);
+  const name = path.name || fallbackObjectName("路线", path.id);
   const meta = pathMeta(path);
   return {
-    type: `${source === "map" ? "已应用" : "草稿"} 路径`,
+    type: `${source === "map" ? "已应用" : "草稿"} 路线`,
     id: path.id,
     meta: `${typeLabel} - ${name} - ${meta}`,
     bucket: "paths",
@@ -2368,7 +2459,32 @@ function pathMeta(path) {
     ? ` / ${start ? semanticLabel(start.type) : "未绑定起点"} → ${end ? semanticLabel(end.type) : "未绑定终点"}`
     : " / 未绑定点位";
   const attackTargets = path.waypointPointIds?.length ? ` / 途经 ${path.waypointPointIds.length} 个攻击目标` : "";
-  return `${semanticLabel(path.type)} / ${mode} / 宽 ${path.width || state.pathWidth}${binding}${attackTargets}`;
+  return `${semanticLabel(path.type)} / 执行：${routeSourceLabel(path)} · ${routeActorLabel(path)} / ${mode} / 宽 ${path.width || state.pathWidth}${binding}${attackTargets}`;
+}
+
+function routeSourceLabel(path) {
+  const id = path.sourceBindingId || path.startPointId;
+  if (!id) return "未绑定来源";
+  if ((path.sourceBindingKind || "point") === "area") {
+    const area = [...state.map.placementZones, ...state.draft.placementZones].find((item) => item.id === id);
+    return area ? `${semanticLabel(area.areaType)} · ${area.name || fallbackObjectName("区域", area.id)}` : "来源区域已删除";
+  }
+  const point = findPointById(id);
+  return point ? `${semanticLabel(point.type)} · ${point.name || fallbackPointName(point)}` : "来源点位已删除";
+}
+
+function routeActorLabel(path) {
+  const value = path.actorScope || (path.type === "movement_route" ? "source_all" : "player");
+  return {
+    source_all: "来源生成的全部敌人",
+    normal_enemy: "普通敌人",
+    elite_enemy: "精英敌人",
+    boss: "Boss",
+    player: "玩家",
+    hero: "英雄",
+    enemy: "指定敌人",
+    npc: "NPC/过场角色"
+  }[value] || value;
 }
 
 function addShooterRouteRuleDraft() {
@@ -2484,6 +2600,7 @@ function clearSelectedObject(id) {
 
 function deleteObjectFromList(id, bucket, source) {
   const target = source === "map" ? state.map : state.draft;
+  clearRouteSourceBindings(id);
   if (bucket === "points") clearPointBindings(id);
   if (isLegacyAreaGroupKey(id)) {
     target[bucket] = target[bucket].filter((item) => legacyAreaGroupId(item, bucket, source) !== id);
@@ -2495,6 +2612,15 @@ function deleteObjectFromList(id, bucket, source) {
   if (source === "draft") state.draft.dirty = hasDraftChanges();
   chatNotice.textContent = `${editObjectLabel()}对象已删除。`;
   renderAll();
+}
+
+function clearRouteSourceBindings(id) {
+  [...state.map.paths, ...state.draft.paths].forEach((path) => {
+    if (path.sourceBindingId === id) {
+      path.sourceBindingId = null;
+      path.sourceBindingKind = null;
+    }
+  });
 }
 
 function clearPointBindings(id) {
@@ -10133,6 +10259,23 @@ function normalizeAssetLayers() {
 }
 
 function handleSelectedConfigInput(event) {
+  const routeField = event.target.dataset.routeField;
+  if (routeField) {
+    const path = findSelectedPath();
+    if (!path) return;
+    if (routeField === "source") {
+      const [kind, id] = event.target.value.split(":");
+      path.sourceBindingKind = id ? kind : null;
+      path.sourceBindingId = id || null;
+      if (kind === "point" && id && !path.startPointId) path.startPointId = id;
+    } else {
+      path[routeField] = event.target.value;
+    }
+    if (state.selectedObject.source === "draft") state.draft.dirty = hasDraftChanges();
+    chatNotice.textContent = `已更新${semanticLabel(path.type)}的执行关系。`;
+    renderAll();
+    return;
+  }
   const mapField = event.target.dataset.mapField;
   if (mapField === "name") {
     state.map.name = event.target.value;
@@ -10357,11 +10500,12 @@ function mapRelationshipWarnings() {
   const movementRoutes = data.paths.filter((path) => path.type === "movement_route");
   const warnings = [];
   movementRoutes.forEach((path) => {
+    if (!(path.sourceBindingId || path.startPointId)) warnings.push(`${path.name || "移动路线"}缺少执行来源`);
     if (!path.startPointId) warnings.push(`${path.name || "移动路线"}缺少起点`);
     if (!path.endPointId) warnings.push(`${path.name || "移动路线"}缺少终点`);
   });
   data.points.filter((point) => point.type === "enemy_spawn").forEach((point) => {
-    if (!movementRoutes.some((path) => path.startPointId === point.id)) warnings.push(`${point.name || "敌人出生点"}尚未连接移动路线`);
+    if (!movementRoutes.some((path) => (path.sourceBindingId || path.startPointId) === point.id)) warnings.push(`${point.name || "敌人出生点"}尚未连接移动路线`);
   });
   data.points.filter((point) => point.type === "tower_core").forEach((point) => {
     if (!movementRoutes.some((path) => path.startPointId === point.id || path.endPointId === point.id || path.waypointPointIds?.includes(point.id))) {
@@ -10829,7 +10973,7 @@ function buildBoundRouteChain(spawn, data) {
   for (let step = 0; step < 8; step += 1) {
     const path = data.paths.find((item) =>
       item.type === "movement_route" &&
-      item.startPointId === currentPointId &&
+      (item.sourceBindingId || item.startPointId) === currentPointId &&
       item.points?.length >= 2 &&
       !used.has(item.id)
     );
@@ -11485,6 +11629,11 @@ function addPolylinePoint(pos) {
       drawMode: state.pathDrawMode,
       points: [],
       startPointId: binding?.id || null,
+      sourceBindingKind: binding ? "point" : null,
+      sourceBindingId: binding?.id || null,
+      actorScope: state.semanticType === "movement_route" ? "source_all" : "player",
+      assignmentMode: "all",
+      loopMode: "once",
       endPointId: null,
       waypointPointIds: []
     };
