@@ -9,6 +9,7 @@ const state = {
   gameType: "towerDefense",
   editObject: "point",
   semanticType: "enemy_spawn",
+  mapMotion: "static",
   tool: "point",
   selectedPointId: null,
   selectedObject: null,
@@ -111,67 +112,31 @@ const pointColors = {
   event_point: "#f59e0b"
 };
 
-const gameMapPresets = {
-  towerDefense: {
+const unifiedMapPreset = {
     point: [
       ["enemy_spawn", "敌人出生点"],
+      ["player_spawn", "玩家出生点"],
       ["target", "终点/消失点"],
+      ["tower_core", "攻击目标点"],
       ["boss", "Boss点"],
       ["resource", "资源点"]
     ],
     path: [
-      ["main", "主路线"],
-      ["branch", "支线路线"],
-      ["boss", "Boss路线"]
+      ["movement_route", "移动路线"],
+      ["patrol_route", "巡逻/过场路线"]
     ],
     area: [
       ["collision", "碰撞区"],
-      ["slow_zone", "减速区"],
-      ["trigger_zone", "出发区"],
-      ["placement_tower", "可放置区"]
-    ]
-  },
-  survivalDefense: {
-    point: [
-      ["tower_core", "防守塔"],
-      ["player_spawn", "玩家出生点"],
-      ["enemy_spawn", "小兵出生点"],
-      ["elite_spawn", "精英怪出生点"],
-      ["boss", "Boss点"],
-      ["supply", "补给点"]
-    ],
-    path: [
-      ["attack_hint", "推荐进攻方向"],
-      ["patrol", "巡逻路径"]
-    ],
-    area: [
-      ["activity_boundary", "活动边界"],
       ["spawn_area", "敌人刷新区"],
-      ["safe_zone", "安全区"],
-      ["danger_zone", "危险区"],
-      ["collision", "碰撞区"],
+      ["activity_boundary", "活动区"],
       ["placement_tower", "可放置区"]
     ]
-  },
-  shooter: {
-    point: [
-      ["player_spawn", "玩家出生点"],
-      ["enemy_anchor", "敌军入口锚点"],
-      ["boss_spawn", "Boss出现点"],
-      ["event_point", "特殊事件点"]
-    ],
-    path: [
-      ["enemy_route_rule", "普通敌军路线"],
-      ["elite_route_rule", "精英敌军路线"],
-      ["boss_route_rule", "Boss移动路线"]
-    ],
-    area: [
-      ["player_bounds", "玩家活动区"],
-      ["enemy_spawn_zone", "敌军生成区"],
-      ["obstacle_zone", "障碍物生成区"],
-      ["safe_zone", "安全区"]
-    ]
-  }
+};
+
+const gameMapPresets = {
+  towerDefense: unifiedMapPreset,
+  survivalDefense: unifiedMapPreset,
+  shooter: unifiedMapPreset
 };
 
 const mapBackgroundSources = {
@@ -407,6 +372,8 @@ const mapObjectFields = document.querySelectorAll(".map-object-field");
 const shooterScrollSettings = document.getElementById("shooterScrollSettings");
 const mapScrollDirection = document.getElementById("mapScrollDirection");
 const mapScrollSpeed = document.getElementById("mapScrollSpeed");
+const mapMotionButtons = document.querySelectorAll("[data-map-motion]");
+const mapScrollOptions = document.getElementById("mapScrollOptions");
 const chatStream = document.getElementById("chatStream");
 const chatComposerInput = document.getElementById("chatComposerInput");
 const chatSend = document.getElementById("chatSend");
@@ -446,8 +413,8 @@ let gameplayFusionGlobe = null;
 
 const toolHints = {
   collision: "选择碰撞类型和笔刷方式，在预览上绘制碰撞区域。",
-  path: "在预览上拖拽生成路径段，后续可由 Chat 细化成完整路径。",
-  area: "在预览上拖拽生成区域，用于刷新、危险、安全、掩体或放置语义。",
+  path: "从点位开始绘制路线；路线端点靠近点位时会自动吸附并建立绑定。",
+  area: "在预览上拖拽绘制碰撞、刷新、活动或可放置区域。",
   point: "在预览里点击放置当前对象类型的点位。"
 };
 
@@ -675,6 +642,17 @@ mapScrollSpeed.addEventListener("change", () => {
   state.map.scrollSpeed = mapScrollSpeed.value;
   resetSimulation();
   renderAll();
+});
+
+mapMotionButtons.forEach((button) => {
+  button.addEventListener("click", () => {
+    state.mapMotion = button.dataset.mapMotion;
+    state.map.motion = state.mapMotion;
+    mapMotionButtons.forEach((item) => item.classList.toggle("active", item === button));
+    mapScrollOptions?.classList.toggle("hidden", state.mapMotion !== "scroll");
+    resetSimulation();
+    renderAll();
+  });
 });
 
 mapCanvas.addEventListener("mousedown", (event) => {
@@ -1052,24 +1030,25 @@ function setupHorizontalResize(handle, container, onResize) {
 function updateToolSettings() {
   const assetSelected = state.selectedCanvasEntity?.kind === "asset";
   mapObjectFields.forEach((field) => field.classList.toggle("hidden", assetSelected));
-  if (shooterScrollSettings) shooterScrollSettings.classList.toggle("hidden", state.gameType !== "shooter" || assetSelected);
+  if (shooterScrollSettings) shooterScrollSettings.classList.add("hidden");
   objectSettings.forEach((setting) => {
     setting.classList.toggle("hidden", assetSelected || setting.dataset.objectSettings !== state.editObject);
   });
   if (toolSettingHint) toolSettingHint.textContent = toolHints[state.editObject] || toolHints[state.tool];
-  if (blockingTypeSetting) blockingTypeSetting.classList.toggle("hidden", !collisionSemanticType(state.semanticType));
-  const shooterPathMode = state.gameType === "shooter" && state.editObject === "path";
-  normalPathSettings.forEach((item) => item.classList.toggle("hidden", shooterPathMode));
-  shooterPathSettings.classList.toggle("hidden", !shooterPathMode);
-  const shooterObstacleMode = state.gameType === "shooter" && state.editObject === "area" && state.semanticType === "obstacle_zone";
-  shooterObstacleSettings.classList.toggle("hidden", !shooterObstacleMode);
+  if (blockingTypeSetting) blockingTypeSetting.classList.toggle("hidden", state.semanticType !== "collision");
+  normalPathSettings.forEach((item) => item.classList.remove("hidden"));
+  shooterPathSettings?.classList.add("hidden");
+  shooterObstacleSettings?.classList.add("hidden");
 }
 
 function syncScrollControls() {
   if (!mapScrollDirection || !mapScrollSpeed) return;
   mapScrollDirection.value = state.map.scrollDirection || "vertical";
   mapScrollSpeed.value = state.map.scrollSpeed || "medium";
-  if (shooterScrollSettings) shooterScrollSettings.classList.toggle("hidden", state.gameType !== "shooter" || state.selectedCanvasEntity?.kind === "asset");
+  state.mapMotion = state.map.motion || "static";
+  mapMotionButtons.forEach((button) => button.classList.toggle("active", button.dataset.mapMotion === state.mapMotion));
+  mapScrollOptions?.classList.toggle("hidden", state.mapMotion !== "scroll");
+  if (shooterScrollSettings) shooterScrollSettings.classList.add("hidden");
 }
 
 function renderSelectedConfig() {
@@ -1303,7 +1282,7 @@ function renderAll() {
 function drawScene(ctx, width, height) {
   const mapBackground = state.map.backgroundUrl ? cacheImage(state.map.backgroundUrl) : mapBackgrounds[state.currentMapId] || mapBackgrounds["hulao-entry"];
   if (mapBackground?.complete && mapBackground.naturalWidth) {
-    if (state.gameType === "shooter" && state.simulation.unitTravelEnabled) {
+    if (state.map.motion === "scroll" && state.simulation.unitTravelEnabled) {
       drawScrollingBackground(ctx, mapBackground, width, height);
       return;
     }
@@ -1576,7 +1555,7 @@ function drawBalanceTestPreview() {
 }
 
 function balancePreviewRoute() {
-  const path = mergedMapData().paths.find((item) => item.type === "main" && item.points?.length > 1);
+  const path = mergedMapData().paths.find((item) => ["movement_route", "main"].includes(item.type) && item.points?.length > 1);
   if (path) return path.points;
   return [
     { x: MAP_WIDTH * 0.18, y: MAP_HEIGHT * 0.05 },
@@ -2383,7 +2362,13 @@ function pathMeta(path) {
     return `${entryLabel(path.entry)} / ${movementLabel(path.movement)} / ${formationLabel(path.formation)} / ${frequencyLabel(path.frequency)}`;
   }
   const mode = path.drawMode === "curve" ? "曲线" : "折线";
-  return `${semanticLabel(path.type)} / ${mode} / 宽 ${path.width || state.pathWidth}`;
+  const start = findPointById(path.startPointId);
+  const end = findPointById(path.endPointId);
+  const binding = start || end
+    ? ` / ${start ? semanticLabel(start.type) : "未绑定起点"} → ${end ? semanticLabel(end.type) : "未绑定终点"}`
+    : " / 未绑定点位";
+  const attackTargets = path.waypointPointIds?.length ? ` / 途经 ${path.waypointPointIds.length} 个攻击目标` : "";
+  return `${semanticLabel(path.type)} / ${mode} / 宽 ${path.width || state.pathWidth}${binding}${attackTargets}`;
 }
 
 function addShooterRouteRuleDraft() {
@@ -2448,7 +2433,7 @@ function frequencyLabel(value) {
 
 function editObjectLabel() {
   if (state.editObject === "point") return "点位";
-  if (state.editObject === "path") return "路径";
+  if (state.editObject === "path") return "路线";
   return "区域";
 }
 
@@ -2499,6 +2484,7 @@ function clearSelectedObject(id) {
 
 function deleteObjectFromList(id, bucket, source) {
   const target = source === "map" ? state.map : state.draft;
+  if (bucket === "points") clearPointBindings(id);
   if (isLegacyAreaGroupKey(id)) {
     target[bucket] = target[bucket].filter((item) => legacyAreaGroupId(item, bucket, source) !== id);
   } else {
@@ -2509,6 +2495,14 @@ function deleteObjectFromList(id, bucket, source) {
   if (source === "draft") state.draft.dirty = hasDraftChanges();
   chatNotice.textContent = `${editObjectLabel()}对象已删除。`;
   renderAll();
+}
+
+function clearPointBindings(id) {
+  [...state.map.paths, ...state.draft.paths].forEach((path) => {
+    if (path.startPointId === id) path.startPointId = null;
+    if (path.endPointId === id) path.endPointId = null;
+    path.waypointPointIds = (path.waypointPointIds || []).filter((pointId) => pointId !== id);
+  });
 }
 
 function updateActivePathWidth(width) {
@@ -3364,7 +3358,7 @@ function createMapApplicationInput() {
     summary: "右侧地图草稿已作为结构化输入提交给 vibe coding 主流程。",
     fields: [
       { label: "关卡", value: state.map.name },
-      { label: "地图类型", value: gameTypeLabel(state.gameType) },
+      { label: "地图运动", value: state.map.motion === "scroll" ? "滚动" : "静止" },
       { label: "本次变更", value: labels.join(" / ") || "无新增草稿" }
     ],
     payload: {
@@ -10329,6 +10323,8 @@ function renderDraftStatus() {
   draftStatus.textContent = count
     ? `草稿：${count} 个未应用修改。Chat 修改当前地图时会自动废弃草稿。`
     : "草稿：无未应用修改";
+  const warnings = mapRelationshipWarnings();
+  if (warnings.length) draftStatus.textContent += ` · 待完善：${warnings[0]}${warnings.length > 1 ? ` 等 ${warnings.length} 项` : ""}`;
   if (simulationStatus) simulationStatus.textContent = state.simulation.status;
   updateToolSettings();
 }
@@ -10356,6 +10352,25 @@ function findPointById(id) {
   return [...state.map.points, ...state.draft.points].find((point) => point.id === id) || null;
 }
 
+function mapRelationshipWarnings() {
+  const data = mergedMapData();
+  const movementRoutes = data.paths.filter((path) => path.type === "movement_route");
+  const warnings = [];
+  movementRoutes.forEach((path) => {
+    if (!path.startPointId) warnings.push(`${path.name || "移动路线"}缺少起点`);
+    if (!path.endPointId) warnings.push(`${path.name || "移动路线"}缺少终点`);
+  });
+  data.points.filter((point) => point.type === "enemy_spawn").forEach((point) => {
+    if (!movementRoutes.some((path) => path.startPointId === point.id)) warnings.push(`${point.name || "敌人出生点"}尚未连接移动路线`);
+  });
+  data.points.filter((point) => point.type === "tower_core").forEach((point) => {
+    if (!movementRoutes.some((path) => path.startPointId === point.id || path.endPointId === point.id || path.waypointPointIds?.includes(point.id))) {
+      warnings.push(`${point.name || "攻击目标点"}尚未接入移动路线`);
+    }
+  });
+  return warnings;
+}
+
 function findPointAt(pos) {
   const points = [
     ...state.map.points.map((item) => ({ item, source: "map" })),
@@ -10368,6 +10383,11 @@ function deletePointById(id) {
   const before = state.map.points.length + state.draft.points.length;
   state.map.points = state.map.points.filter((point) => point.id !== id);
   state.draft.points = state.draft.points.filter((point) => point.id !== id);
+  [...state.map.paths, ...state.draft.paths].forEach((path) => {
+    if (path.startPointId === id) path.startPointId = null;
+    if (path.endPointId === id) path.endPointId = null;
+    path.waypointPointIds = (path.waypointPointIds || []).filter((pointId) => pointId !== id);
+  });
   clearSelectedObject(id);
   if (before !== state.map.points.length + state.draft.points.length) {
     chatNotice.textContent = "选中点位已删除。";
@@ -10409,6 +10429,10 @@ function resetSimulation() {
 
 function updateSimulation() {
   if (!state.simulation.unitTravelEnabled) return;
+  if (state.map.motion === "scroll") {
+    const speed = scrollSpeedValue(state.map.scrollSpeed || "medium");
+    state.simulation.scrollOffset = (state.simulation.scrollOffset + speed) % MAP_HEIGHT;
+  }
   if (state.gameType === "shooter") {
     updateShooterSimulation();
     return;
@@ -10461,7 +10485,7 @@ function updateSimulation() {
   const nextActiveCount = Object.keys(state.simulation.unitsBySpawn).length;
   state.simulation.status = spawns.length
     ? `单位行进：${nextActiveCount}/${spawns.length} 个出生点运行中${detourCount ? `，${detourCount} 个绕行` : ""}${blockedCount ? `，${blockedCount} 个被阻挡` : ""}`
-    : "单位行进：未找到当前游戏类型的出生点";
+    : "单位行进：未找到敌人出生点或Boss点";
   if (simulationStatus) simulationStatus.textContent = state.simulation.status;
 }
 
@@ -10499,8 +10523,6 @@ function updateShooterSimulation() {
   const obstacleZones = merged.placementZones.filter((zone) => zone.areaType === "obstacle_zone");
   const scrollAssets = (state.map.objects || []).filter((object) => object.spawnMode === "scroll_random");
   const direction = currentScrollDirection();
-  const scrollSpeed = scrollSpeedValue(state.map.scrollSpeed || mapScrollSpeed?.value || "medium");
-  state.simulation.scrollOffset = (state.simulation.scrollOffset + (direction === "vertical" ? scrollSpeed : scrollSpeed * 0.75)) % MAP_HEIGHT;
   state.simulation.shooterEnemyCooldown = Math.max(0, state.simulation.shooterEnemyCooldown - 1);
   state.simulation.shooterObstacleCooldown = Math.max(0, state.simulation.shooterObstacleCooldown - 1);
   scrollAssets.forEach((asset) => {
@@ -10778,16 +10800,17 @@ function mergedMapData() {
 }
 
 function simulationSpawnPoints(data) {
-  const spawnTypes = state.gameType === "survivalDefense" ? ["enemy_spawn", "elite_spawn", "boss"] : ["enemy_spawn", "boss"];
-  return data.points.filter((point) => spawnTypes.includes(point.type));
+  return data.points.filter((point) => ["enemy_spawn", "boss"].includes(point.type));
 }
 
 function simulationTargets(data) {
-  if (state.gameType === "survivalDefense") return data.points.filter((point) => point.type === "tower_core");
-  return data.points.filter((point) => point.type === "target");
+  const attackTargets = data.points.filter((point) => point.type === "tower_core");
+  return attackTargets.length ? attackTargets : data.points.filter((point) => point.type === "target");
 }
 
 function buildSimulationRoute(spawn, data) {
+  const boundRoute = buildBoundRouteChain(spawn, data);
+  if (boundRoute.length > 1) return boundRoute;
   const path = nearestPath(spawn, data.paths);
   const target = nearestPoint(spawn, simulationTargets(data));
   if (path && target) {
@@ -10797,6 +10820,29 @@ function buildSimulationRoute(spawn, data) {
   if (path) return [spawn, ...orientPathFromSpawn(pathRoutePoints(path), spawn)];
   if (target) return [spawn, target];
   return [];
+}
+
+function buildBoundRouteChain(spawn, data) {
+  const route = [spawn];
+  const used = new Set();
+  let currentPointId = spawn.id;
+  for (let step = 0; step < 8; step += 1) {
+    const path = data.paths.find((item) =>
+      item.type === "movement_route" &&
+      item.startPointId === currentPointId &&
+      item.points?.length >= 2 &&
+      !used.has(item.id)
+    );
+    if (!path) break;
+    used.add(path.id);
+    route.push(...pathRoutePoints(path).slice(1));
+    if (!path.endPointId || path.endPointId === currentPointId) break;
+    currentPointId = path.endPointId;
+    const endPoint = findPointById(currentPointId);
+    if (endPoint && distance(route[route.length - 1], endPoint) > 1) route.push(endPoint);
+    if (endPoint?.type === "target") break;
+  }
+  return route;
 }
 
 function nearestPath(point, paths) {
@@ -11099,7 +11145,7 @@ function simulateChatMapChange() {
     summary: "左侧 Chat 请求重新生成当前地图，未应用草稿会被清空。",
     fields: [
       { label: "关卡", value: state.map.name },
-      { label: "地图类型", value: gameTypeLabel(state.gameType) },
+      { label: "地图运动", value: state.map.motion === "scroll" ? "滚动" : "静止" },
       { label: "处理方式", value: "重置草稿并刷新地图预览" }
     ],
     payload: {
@@ -11177,6 +11223,7 @@ function createEmptyMap(id, name) {
     objects: [],
     backgroundUrl: null,
     backgroundName: null,
+    motion: "static",
     scrollDirection: "vertical",
     scrollSpeed: "medium"
   };
@@ -11259,15 +11306,13 @@ function handleEditStart(event, source) {
     return;
   }
   if (state.tool === "path") {
-    if (state.gameType === "shooter") {
-      state.isDrawing = false;
-      return;
-    }
-    const hit = findPathAt(pos);
-    if (hit) {
-      selectObject(hit.item.id, "paths", hit.source);
-      state.isDrawing = false;
-      return;
+    if (!state.activeDraftPolyline) {
+      const hit = findPathAt(pos);
+      if (hit) {
+        selectObject(hit.item.id, "paths", hit.source);
+        state.isDrawing = false;
+        return;
+      }
     }
     addPolylinePoint(pos);
     state.isDrawing = false;
@@ -11415,7 +11460,7 @@ function randomPointName(type) {
     target: "终点",
     boss: "首领",
     resource: "资源",
-    tower_core: "守塔",
+    tower_core: "攻击目标",
     player_spawn: "玩家",
     elite_spawn: "精英",
     supply: "补给",
@@ -11429,17 +11474,36 @@ function randomObjectName(prefix) {
 }
 
 function addPolylinePoint(pos) {
+  const binding = nearestRoutePoint(pos, 30);
+  const routePoint = binding ? { x: binding.x, y: binding.y } : pos;
   if (!state.activeDraftPolyline) {
     state.activeDraftPolyline = {
       id: nextId("path"),
-      name: randomObjectName("路径"),
+      name: randomObjectName("路线"),
       type: state.semanticType,
       width: state.pathWidth,
       drawMode: state.pathDrawMode,
-      points: []
+      points: [],
+      startPointId: binding?.id || null,
+      endPointId: null,
+      waypointPointIds: []
     };
   }
-  state.activeDraftPolyline.points.push(pos);
+  state.activeDraftPolyline.points.push(routePoint);
+  if (binding) {
+    state.activeDraftPolyline.endPointId = binding.id;
+    if (binding.type === "tower_core" && !state.activeDraftPolyline.waypointPointIds.includes(binding.id)) {
+      state.activeDraftPolyline.waypointPointIds.push(binding.id);
+    }
+    chatNotice.textContent = `路线已绑定${semanticLabel(binding.type)}：${binding.name || fallbackPointName(binding)}`;
+  }
+}
+
+function nearestRoutePoint(pos, maxDistance) {
+  return [...state.map.points, ...state.draft.points]
+    .map((point) => ({ point, value: distance(point, pos) }))
+    .filter(({ value }) => value <= maxDistance)
+    .sort((a, b) => a.value - b.value)[0]?.point || null;
 }
 
 function commitActivePolyline() {
@@ -11448,7 +11512,12 @@ function commitActivePolyline() {
     renderAll();
     return;
   }
-  state.draft.paths.push(state.activeDraftPolyline);
+  const path = state.activeDraftPolyline;
+  const firstBinding = nearestRoutePoint(path.points[0], 2);
+  const lastBinding = nearestRoutePoint(path.points[path.points.length - 1], 2);
+  path.startPointId = path.startPointId || firstBinding?.id || null;
+  path.endPointId = lastBinding?.id || path.endPointId || null;
+  state.draft.paths.push(path);
   state.draftHistory.push({ action: "add", bucket: "paths", id: state.activeDraftPolyline.id });
   state.draft.dirty = true;
   state.activeDraftPolyline = null;

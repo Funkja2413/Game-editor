@@ -368,17 +368,10 @@
               <div class="tool-group">
                 <div class="panel-title">地图编辑</div>
                 <p class="tool-hint">固定预览后，在中间预览上点击或拖拽编辑地图。</p>
-                <div class="compact-field">
-                  游戏类型
-                  <div class="segmented-control game-type-control" id="gameType">
-                    <button class="active" data-game-type="towerDefense">塔防</button>
-                    <button data-game-type="survivalDefense">守塔割草</button>
-                    <button data-game-type="shooter">射击</button>
-                  </div>
-                </div>
                 <label class="compact-field">
-                  关卡地图
-                  <select id="mapSelect">
+                  当前关卡
+                  <strong>第1关 · 虎牢关入口</strong>
+                  <select id="mapSelect" class="hidden" aria-hidden="true" tabindex="-1">
                     <option value="hulao-entry">第1关 虎牢关入口</option>
                     <option value="gate-defense">第2关 城门防线</option>
                     <option value="boss-camp">第3关 Boss营地</option>
@@ -398,9 +391,13 @@
                   </div>
                   <input id="mapBackgroundInput" type="file" accept="image/*" hidden />
                 </div>
-                <div class="compact-field shooter-scroll-settings hidden" id="shooterScrollSettings">
-                  卷轴设置
-                  <div class="selected-config-grid">
+                <div class="compact-field" id="mapMotionSettings">
+                  地图运动
+                  <div class="segmented-control" id="mapMotionMode">
+                    <button class="active" data-map-motion="static">静止</button>
+                    <button data-map-motion="scroll">滚动</button>
+                  </div>
+                  <div class="selected-config-grid hidden" id="mapScrollOptions">
                     <label class="tool-setting">
                       卷轴方向
                       <select id="mapScrollDirection">
@@ -422,7 +419,7 @@
                   编辑对象
                   <div class="segmented-control edit-object-control" id="editObject">
                     <button class="active" data-edit-object="point">点位</button>
-                    <button data-edit-object="path">路径</button>
+                    <button data-edit-object="path">路线</button>
                     <button data-edit-object="area">区域</button>
                   </div>
                 </div>
@@ -437,8 +434,8 @@
                 <p class="tool-hint">点击空白处新增点位，点击已有点位选中；删除统一在对象列表中操作。</p>
               </div>
               <div class="tool-group object-settings hidden" id="pathSettings" data-object-settings="path">
-                <div class="panel-title">路径设置</div>
-                <p class="tool-hint normal-path-setting">连续点击添加路径节点，双击或点击完成结束；曲线会按节点平滑显示。</p>
+                <div class="panel-title">路线设置</div>
+                <p class="tool-hint normal-path-setting">从点位开始绘制，点击途经点继续，双击或点击完成结束；靠近点位时会自动绑定。</p>
                 <label class="tool-setting normal-path-setting">
                   画线方式
                   <div class="segmented-control path-mode-control" id="pathDrawMode">
@@ -453,7 +450,7 @@
                     <span id="pathWidthValue">16</span>
                   </div>
                 </label>
-                <button class="normal-path-setting" id="finishPolyline">完成折线</button>
+                <button class="normal-path-setting" id="finishPolyline">完成路线</button>
                 <div class="shooter-rule-setting hidden" id="shooterPathSettings">
                   <p class="tool-hint">选择敌军路线组合，AI/模拟会随机生成实际飞行路线。</p>
                   <label class="tool-setting hidden">
