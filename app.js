@@ -1144,9 +1144,10 @@ function renderRouteExecutionConfig(path) {
     ${path.type === "movement_route" ? `
       <label class="tool-setting">
         多路线分配
+        <span class="tool-hint">同一执行来源连接多条移动路线时，决定符合条件的单位如何选路。</span>
         <select data-route-field="assignmentMode">
-          <option value="all" ${(path.assignmentMode || "all") === "all" ? "selected" : ""}>全部使用此路线</option>
-          <option value="random" ${path.assignmentMode === "random" ? "selected" : ""}>在可用路线中随机</option>
+          <option value="all" ${(path.assignmentMode || "all") === "all" ? "selected" : ""}>固定走此路线</option>
+          <option value="random" ${path.assignmentMode === "random" ? "selected" : ""}>在多条路线中随机分流</option>
         </select>
       </label>
     ` : `
@@ -1961,8 +1962,9 @@ function drawActiveAreaStroke(ctx) {
 function drawActivePolyline(ctx) {
   if (!state.activeDraftPolyline || state.activeDraftPolyline.points.length < 1) return;
   ctx.save();
-  ctx.strokeStyle = "#f59e0b";
-  ctx.fillStyle = "#f59e0b";
+  const color = pathColor(state.activeDraftPolyline.type);
+  ctx.strokeStyle = color;
+  ctx.fillStyle = color;
   ctx.lineWidth = state.pathWidth;
   ctx.setLineDash([8, 6]);
   const points = state.activeDraftPolyline.points;
@@ -1981,11 +1983,16 @@ function drawObjectSet(ctx, data, isDraft) {
     if (path.kind === "shooter_route_rule") return;
     if (path.points.length < 2) return;
     const selected = isSelectedObject(path.id, "paths", source);
-    ctx.strokeStyle = isDraft ? "#f59e0b" : "#8b5cf6";
+    const color = pathColor(path.type);
+    ctx.strokeStyle = color;
     ctx.lineWidth = selected ? (path.width || 5) + 8 : path.width || (isDraft ? 5 : 3);
     ctx.setLineDash(isDraft ? [10, 8] : []);
-    if (selected) ctx.strokeStyle = "#f59e0b";
+    if (selected) {
+      ctx.shadowColor = "#f59e0b";
+      ctx.shadowBlur = 10;
+    }
     drawPathLine(ctx, path);
+    ctx.shadowBlur = 0;
     ctx.setLineDash([]);
   });
 
@@ -2030,7 +2037,11 @@ function drawObjectSet(ctx, data, isDraft) {
 function semanticTypeColor(type) {
   if (state.editObject === "point") return pointColor(type);
   if (state.editObject === "area") return areaColor(type);
-  return "#8b5cf6";
+  return pathColor(type);
+}
+
+function pathColor(type) {
+  return type === "patrol_route" ? "#0d9488" : "#8b5cf6";
 }
 
 function pointColor(type) {
@@ -2413,7 +2424,7 @@ function pathObjectRow(path, source) {
     meta: `${typeLabel} - ${name} - ${meta}`,
     bucket: "paths",
     source,
-    display: objectLineDisplay("#8b5cf6", `${typeLabel} - ${name} - ${meta}`)
+    display: objectLineDisplay(pathColor(path.type), `${typeLabel} - ${name} - ${meta}`)
   };
 }
 
@@ -10443,7 +10454,7 @@ function discardDraft() {
 }
 
 function applyDraft() {
-  if (state.activeDraftPolyline) commitActivePolyline();
+  if (state.activeDraftPolyline && !commitActivePolyline()) return;
   const mapApplication = createMapApplicationInput();
   state.map.collisionZones.push(...state.draft.collisionZones);
   state.map.paths.push(...state.draft.paths);
@@ -11656,10 +11667,11 @@ function nearestRoutePoint(pos, maxDistance) {
 }
 
 function commitActivePolyline() {
-  if (!state.activeDraftPolyline || state.activeDraftPolyline.points.length < 2) {
-    state.activeDraftPolyline = null;
+  if (!state.activeDraftPolyline) return false;
+  if (state.activeDraftPolyline.points.length < 2) {
+    chatNotice.textContent = `${semanticLabel(state.activeDraftPolyline.type)}至少需要两个路线节点，请继续在地图上点击下一个位置。`;
     renderAll();
-    return;
+    return false;
   }
   const path = state.activeDraftPolyline;
   const firstBinding = nearestRoutePoint(path.points[0], 2);
@@ -11667,10 +11679,13 @@ function commitActivePolyline() {
   path.startPointId = path.startPointId || firstBinding?.id || null;
   path.endPointId = lastBinding?.id || path.endPointId || null;
   state.draft.paths.push(path);
-  state.draftHistory.push({ action: "add", bucket: "paths", id: state.activeDraftPolyline.id });
+  state.draftHistory.push({ action: "add", bucket: "paths", id: path.id });
   state.draft.dirty = true;
   state.activeDraftPolyline = null;
+  state.selectedObject = { id: path.id, bucket: "paths", source: "draft" };
+  chatNotice.textContent = `${semanticLabel(path.type)}已完成；可在右侧配置执行来源和执行角色。`;
   renderAll();
+  return true;
 }
 
 function addCollisionZone(area) {
