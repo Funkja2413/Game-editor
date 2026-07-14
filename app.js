@@ -607,6 +607,8 @@ brushSize.addEventListener("input", () => {
 
 document.getElementById("clearLayer").addEventListener("click", () => {
   clearCurrentDraftLayer();
+  clearSelectedObject();
+  if (state.tool === "point") resetMapTestPlayer();
   state.draftHistory.push({ action: "clear", tool: state.tool });
   state.draft.dirty = hasDraftChanges();
   state.activeDraftPolyline = null;
@@ -10493,18 +10495,6 @@ function applyDraft() {
 }
 
 function renderDraftStatus() {
-  if (!draftStatus) return;
-  const count =
-    state.draft.collisionZones.length +
-    state.draft.paths.length +
-    state.draft.placementZones.length +
-    state.draft.points.length;
-  draftStatus.textContent = count
-    ? `草稿：${count} 个未应用修改。Chat 修改当前地图时会自动废弃草稿。`
-    : "草稿：无未应用修改";
-  const warnings = mapRelationshipWarnings();
-  if (warnings.length) draftStatus.textContent += ` · 待完善：${warnings[0]}${warnings.length > 1 ? ` 等 ${warnings.length} 项` : ""}`;
-  if (simulationStatus) simulationStatus.textContent = state.simulation.status;
   updateToolSettings();
 }
 
@@ -11738,8 +11728,10 @@ function handlePointClick(pos) {
     x: pos.x,
     y: pos.y
   };
-  state.map.points.push(point);
-  state.selectedObject = { id: point.id, bucket: "points", source: "map" };
+  state.draft.points.push(point);
+  state.draftHistory.push({ action: "add", bucket: "points", id: point.id });
+  state.draft.dirty = true;
+  state.selectedObject = { id: point.id, bucket: "points", source: "draft" };
   state.selectedPointId = point.id;
   if (point.type === "player_spawn") resetMapTestPlayer();
   chatNotice.textContent = `已添加${semanticLabel(point.type)}。`;

@@ -1924,6 +1924,7 @@ body.is-resizing .split-resizer::before {
 .object-list-section {
   display: grid;
   gap: 8px;
+  min-height: 260px;
   padding-top: 10px;
   border-top: 1px solid var(--line);
 }
@@ -3017,9 +3018,10 @@ body.is-resizing .split-resizer::before {
 
 .object-list {
   display: grid;
+  align-content: start;
   gap: 8px;
   overflow: auto;
-  max-height: 260px;
+  max-height: min(48vh, 520px);
 }
 
 .object-row {
