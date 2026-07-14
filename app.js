@@ -34,7 +34,7 @@ const state = {
   assetCollisionAction: "none",
   draggingAsset: null,
   lassoPoints: [],
-  player: { x: 500, y: 1030, r: 18, blocked: false },
+  player: createMapTestPlayer(),
   simulation: {
     unitTravelEnabled: false,
     unitsBySpawn: {},
@@ -477,6 +477,7 @@ unitTravelToggle.addEventListener("click", () => {
   unitTravelToggle.setAttribute("aria-pressed", String(state.simulation.unitTravelEnabled));
   unitTravelToggle.textContent = state.simulation.unitTravelEnabled ? "暂停模拟" : "开始模拟";
   resetSimulation();
+  if (state.simulation.unitTravelEnabled) startPlayerPatrolIfAvailable();
   state.simulation.status = state.simulation.unitTravelEnabled ? "单位行进：已开启，出生点将各自生成 1 个模拟单位。" : "单位行进：未开启";
   renderAll();
 });
@@ -892,13 +893,29 @@ function updatePreviewZoomControls() {
 }
 
 function replayPreview() {
-  if (state.activeView === "gameplay" || state.gameplaySkeleton) {
+  if (state.activeView === "gameplay") {
     restartGameplayPreview();
     return;
   }
-  state.player = { x: 500, y: 1030, r: 18, blocked: false };
   resetSimulation();
+  resetMapTestPlayer();
+  chatNotice.textContent = state.player.controlMode === "patrol"
+    ? "Replay：测试角色已归位到玩家出生点，并恢复巡逻。"
+    : "Replay：测试角色已归位到玩家出生点。";
   renderAll();
+}
+
+function createMapTestPlayer() {
+  return {
+    x: 500,
+    y: 1030,
+    r: 18,
+    blocked: false,
+    controlMode: "spawn",
+    patrolPathId: null,
+    patrolSegment: 1,
+    patrolDirection: 1
+  };
 }
 
 function restartGameplayPreview() {
@@ -2248,7 +2265,12 @@ function drawTestPlayer(ctx) {
   ctx.stroke();
   ctx.fillStyle = "#152033";
   ctx.font = "bold 12px sans-serif";
-  ctx.fillText("测试角色", state.player.x + 18, state.player.y + 4);
+  const modeLabel = state.player.controlMode === "patrol"
+    ? "测试角色 · 巡逻中"
+    : state.player.controlMode === "manual"
+      ? "测试角色 · 玩家控制"
+      : "测试角色";
+  ctx.fillText(modeLabel, state.player.x + 18, state.player.y + 4);
   ctx.restore();
 }
 
@@ -10283,6 +10305,9 @@ function handleSelectedConfigInput(event) {
       path[routeField] = event.target.value;
     }
     if (state.selectedObject.source === "draft") state.draft.dirty = hasDraftChanges();
+    if (path.type === "patrol_route" && state.simulation.unitTravelEnabled && state.player.controlMode !== "manual") {
+      startPlayerPatrolIfAvailable();
+    }
     chatNotice.textContent = `已更新${semanticLabel(path.type)}的执行关系。`;
     renderAll();
     return;
@@ -10641,7 +10666,17 @@ function updateSimulation() {
   state.simulation.status = spawns.length
     ? `单位行进：${nextActiveCount}/${spawns.length} 个出生点运行中${detourCount ? `，${detourCount} 个绕行` : ""}${blockedCount ? `，${blockedCount} 个被阻挡` : ""}`
     : "单位行进：未找到敌人出生点或Boss点";
+  state.simulation.status += ` · ${mapTestPlayerStatusLabel()}`;
   if (simulationStatus) simulationStatus.textContent = state.simulation.status;
+}
+
+function mapTestPlayerStatusLabel() {
+  return {
+    patrol: "测试角色巡逻中",
+    manual: "测试角色由玩家控制",
+    patrol_done: "测试角色已完成巡逻",
+    spawn: "测试角色已归位"
+  }[state.player.controlMode] || "测试角色待机";
 }
 
 function drawSimulationUnits(ctx) {
@@ -11220,6 +11255,90 @@ function rotateVector(vector, angle) {
   };
 }
 
+function resetMapTestPlayer() {
+  state.player = createMapTestPlayer();
+  const spawn = mergedMapData().points.find((point) => point.type === "player_spawn");
+  if (spawn) {
+    state.player.x = spawn.x;
+    state.player.y = spawn.y;
+  }
+  if (state.simulation.unitTravelEnabled) startPlayerPatrolIfAvailable();
+}
+
+function playerPatrolRoute() {
+  const data = mergedMapData();
+  const spawn = data.points.find((point) => point.type === "player_spawn");
+  if (!spawn) return null;
+  return data.paths.find((path) => {
+    if (path.type !== "patrol_route" || !["player", "hero"].includes(path.actorScope || "player")) return false;
+    const sourceId = path.sourceBindingId || path.startPointId;
+    return !sourceId || sourceId === spawn.id;
+  }) || null;
+}
+
+function startPlayerPatrolIfAvailable() {
+  if (state.player.controlMode === "manual") return false;
+  const path = playerPatrolRoute();
+  if (!path?.points?.length || path.points.length < 2) {
+    state.player.controlMode = "spawn";
+    state.player.patrolPathId = null;
+    return false;
+  }
+  state.player.controlMode = "patrol";
+  state.player.patrolPathId = path.id;
+  state.player.patrolDirection = 1;
+  state.player.patrolSegment = distance(state.player, path.points[0]) <= 24 ? 1 : 0;
+  return true;
+}
+
+function updatePlayerPatrol() {
+  if (!state.simulation.unitTravelEnabled || state.player.controlMode !== "patrol") return;
+  const path = [...state.map.paths, ...state.draft.paths].find((item) => item.id === state.player.patrolPathId);
+  if (!path?.points?.length || path.points.length < 2) {
+    state.player.controlMode = "spawn";
+    state.player.patrolPathId = null;
+    return;
+  }
+  const points = pathRoutePoints(path);
+  const index = clamp(state.player.patrolSegment, 0, points.length - 1);
+  const target = points[index];
+  const dx = target.x - state.player.x;
+  const dy = target.y - state.player.y;
+  const remaining = Math.hypot(dx, dy);
+  const speed = 2.25;
+  if (remaining > speed) {
+    const next = { x: state.player.x + (dx / remaining) * speed, y: state.player.y + (dy / remaining) * speed };
+    if (collidesWithMovement(next.x, next.y, state.player.r)) {
+      state.player.blocked = true;
+      return;
+    }
+    state.player.x = next.x;
+    state.player.y = next.y;
+    state.player.blocked = false;
+    return;
+  }
+  state.player.x = target.x;
+  state.player.y = target.y;
+  const loopMode = path.loopMode || "once";
+  if (state.player.patrolDirection > 0 && index >= points.length - 1) {
+    if (loopMode === "ping_pong") {
+      state.player.patrolDirection = -1;
+      state.player.patrolSegment = Math.max(0, points.length - 2);
+    } else if (loopMode === "loop") {
+      state.player.patrolSegment = 0;
+    } else {
+      state.player.controlMode = "patrol_done";
+    }
+    return;
+  }
+  if (state.player.patrolDirection < 0 && index <= 0) {
+    state.player.patrolDirection = 1;
+    state.player.patrolSegment = Math.min(1, points.length - 1);
+    return;
+  }
+  state.player.patrolSegment += state.player.patrolDirection;
+}
+
 function updatePlayer() {
   let dx = 0;
   let dy = 0;
@@ -11227,7 +11346,16 @@ function updatePlayer() {
   if (state.pressedKeys.has("d") || state.pressedKeys.has("arrowright")) dx += 1;
   if (state.pressedKeys.has("w") || state.pressedKeys.has("arrowup")) dy -= 1;
   if (state.pressedKeys.has("s") || state.pressedKeys.has("arrowdown")) dy += 1;
-  if (!dx && !dy) return;
+  if (!dx && !dy) {
+    updatePlayerPatrol();
+    return;
+  }
+
+  if (state.player.controlMode !== "manual") {
+    state.player.controlMode = "manual";
+    state.player.patrolPathId = null;
+    chatNotice.textContent = "已由玩家接管测试角色；点击 Replay 可归位并恢复巡逻。";
+  }
 
   const length = Math.hypot(dx, dy);
   const speed = 3.2;
@@ -11606,6 +11734,7 @@ function handlePointClick(pos) {
   state.map.points.push(point);
   state.selectedObject = { id: point.id, bucket: "points", source: "map" };
   state.selectedPointId = point.id;
+  if (point.type === "player_spawn") resetMapTestPlayer();
   chatNotice.textContent = `已添加${semanticLabel(point.type)}。`;
 }
 
@@ -11683,6 +11812,9 @@ function commitActivePolyline() {
   state.draft.dirty = true;
   state.activeDraftPolyline = null;
   state.selectedObject = { id: path.id, bucket: "paths", source: "draft" };
+  if (path.type === "patrol_route" && state.simulation.unitTravelEnabled && state.player.controlMode !== "manual") {
+    startPlayerPatrolIfAvailable();
+  }
   chatNotice.textContent = `${semanticLabel(path.type)}已完成；可在右侧配置执行来源和执行角色。`;
   renderAll();
   return true;
