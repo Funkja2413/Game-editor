@@ -11036,9 +11036,16 @@ function buildBoundRouteChain(spawn, data) {
 }
 
 function nearestPath(point, paths) {
-  const drawablePaths = paths.filter((path) => path.points?.length >= 2);
+  const drawablePaths = paths.filter((path) => isEnemyMovementRoute(path, point.id) && path.points?.length >= 2);
   if (!drawablePaths.length) return null;
   return [...drawablePaths].sort((a, b) => pathDistanceToPoint(a, point) - pathDistanceToPoint(b, point))[0];
+}
+
+function isEnemyMovementRoute(path, sourcePointId) {
+  if (["main", "branch", "boss", "attack_hint"].includes(path.type)) return true;
+  if (path.type !== "movement_route") return false;
+  const boundSourceId = path.sourceBindingId || path.startPointId;
+  return !boundSourceId || boundSourceId === sourcePointId;
 }
 
 function pathDistanceToPoint(path, point) {
