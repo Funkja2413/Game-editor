@@ -1923,6 +1923,8 @@ body.is-resizing .split-resizer::before {
 
 .object-list-section {
   display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  align-content: stretch;
   gap: 8px;
   min-height: 260px;
   padding-top: 10px;
@@ -3022,6 +3024,10 @@ body.is-resizing .split-resizer::before {
   gap: 8px;
   overflow: auto;
   max-height: min(48vh, 520px);
+}
+
+.object-list:has(.object-empty) {
+  align-content: center;
 }
 
 .object-row {
